@@ -1,7 +1,10 @@
-from Plato import Plato
-from Empresa import Empresa
-from Esquina import Esquina
+import sys 
+import os
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__),'..','modelo')))
 from math import sqrt
+from Plato import Plato
+from Esquina import Esquina
+from Empresa import Empresa
 
 class Sucursal:
     sucursales = []
