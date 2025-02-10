@@ -3,12 +3,11 @@ import datetime
 from typing import List
 from modelo.Administrativo import Administrativo
 from modelo.Banco import Banco
-from modelo.Banco import Cliente
-from modelo.Banco import Barrio
-from modelo.Banco import Sucursal
-from modelo.Banco import Empresa
 from modelo.Cliente import Cliente
-from modelo.Plato import Plato
+from modelo.Barrio import Barrio
+from modelo.Sucursal import Sucursal
+from modelo.Empresa import Empresa
+from modelo.Empleado import Empleado
 from modelo.Domicilio import Domicilio
 from modelo.Pedido import Pedido
 from modelo.EstadoPedido import EstadoPedido
@@ -218,7 +217,17 @@ def entrada():
             continue
         x = True
     return cedula
-    
+
+def ingresarNombre():
+    x = False
+    while x == False:
+        nombre = input()
+        if "1" in nombre or "2" in nombre or "3" in nombre or "4" in nombre or "5" in nombre or "6" in nombre or "7" in nombre or "8" in nombre or "9" in nombre or "0" in nombre or "_" in nombre or "," in nombre or "-" in nombre or "." in nombre:
+            print("Caracter no permitido, ingrese únicamente letras")
+            continue
+        x = True
+    return nombre
+  
 def admin():
     print("Ingrese su número de cédula(para salir ingrese 0)")
     cedula = entrada()
@@ -270,16 +279,20 @@ def pedirPrestamo():
             anos = 0
             correcto = False
             while correcto == False:
-                print("Escriba la cantidad de años en los que desa pagar su préstamo")
+                print("Escriba la cantidad de años en los que desea pagar su préstamo")
                 anos = entrada()
                 if (anos <= 0) or (anos > 10):
                     print("No se va a aceptar un plazo de esa cantidad de años")
                 else:
-                    print("Tendrá que pagar en " + str(anos) + " años")
+                    if anos == 1:
+                        print("Tendrá que pagar en " + str(anos) + " año")
+                    else:
+                        print("Tendrá que pagar en " + str(anos) + " años")
                     correcto = True
             interes = prestamo * anos * 0.03
-            Empresa.endeudar(prestamo + interes)
-            print("Se han añadido " + str(prestamo + interes) + "a su deuda")
+            total = round(prestamo + interes)
+            Empresa.endeudar(total)
+            print("Se han añadido $" + str(round(total/1000000,1)) + "M a su deuda")
             aceptado = True
     return prestamo
 
@@ -317,7 +330,7 @@ def comprarTerreno(presupuesto):
         print(str(i + 1) + ". " + local.getDireccion())
         i += 1
     eleccion = entrada()
-    while eleccion > i:
+    while eleccion > i or eleccion < 1:
         print("Opción no disponible")
         print("Escoja otra opción")
         eleccion = entrada()
@@ -326,12 +339,12 @@ def comprarTerreno(presupuesto):
     esqPer = Barrio.esquinasPer(direccion)
     valor = []
     cantidad = []
-    print("Escoja cuál de los locales disponibles le parecen más interesantes")
+    print("Escoja cuál de los locales disponibles le parece más interesante")
     for n in range(0, esqPer, 1):
-        cOsto = Barrio.precio()
+        cOsto = Barrio.precio(presupuesto)
         valor.append(cOsto)
         cantidad.append(Barrio.espacio(cOsto))
-        print(str(n + 1) + ". Precio: $" + str(round(valor[n] / 1000000)) + "M, Capacidad: " + cantidad[n] + " mesas")
+        print(str(n + 1) + ". Precio: $" + str(round(valor[n] / 1000000)) + "M, Capacidad: " + str(cantidad[n]) + " mesas")
     este = 5
     while este > len(cantidad) or este < 1:
         este = entrada()
@@ -342,12 +355,69 @@ def comprarTerreno(presupuesto):
     presupuesto -= 10000000
     nombre = barrio.getNombre()
     barrio.setSucursal(True)
-    return Sucursal(1, nombre, espacio, direccion, presupuesto)
+    new = Sucursal.getSucursales()[-1].getId()
+    return Sucursal(new + 1, nombre, espacio, direccion, presupuesto)
 
+def habilitarSucursal(sucursal):
+    cantidad = sucursal.getCantidad()
+    bien = False
+    while bien == False:
+        print("Escoja cuántas mesas de 4 espacios desea comprar: $500.000")
+        pequenas = entrada()
+        print("Escoja cuántas mesas de 6 espacios desea comprar: $800.000")
+        medianas = entrada()
+        print("Escoja cuántas mesas de 8 espacios desea comprar: $1.200.000")
+        grandes = entrada()
+        if (pequenas < 0) or (medianas < 0) or (grandes < 0):
+            print("No están permitidos los números negativos")
+            continue
+        if pequenas + medianas + grandes > cantidad:
+            print("Esas son demasiadas mesas, no tenemos suficiente espacio para todas")
+            continue
+        if pequenas + medianas + grandes < cantidad:
+            print("Necesitamos más mesas, esas no son suficientes para llenar el espacio")
+            continue
+        sucursal.comprarMesas(pequenas, medianas, grandes)
+        bien = True
+    sucursal.restarPresupuesto(10000000)
+    print("Se ha comprado un cocina profesional de $10.000.000")
+    for i in range(5):
+        nombre = sucursal.autoMesero()
+        print("Se ha contaratado a " + nombre + " para trabajar como mesero")
+    for i in range(3):
+        nombre = sucursal.autoChef()
+        print("Se ha contaratado a " + nombre + " para trabajar como chef")
+    print("Ingrese el nombre del administrador que se va a contratar")
+    admin = ingresarNombre()
+    cedula = Empleado.generarDocumento()
+    print("Ingrese la contraseña para la nueva cuenta")
+    clave = input()
+    Administrativo(admin, cedula, clave)
+    print("No olvide los datos")
+    print("Nuevo admin: " + admin)
+    print("Documento: " + str(cedula))
+    print("Contraseña: " + str(clave))
+        
+def cerrarSucursal():
+    sucursales = Sucursal.getSucursales()
+    i = 1
+    print("Escoja la sucursal que desea cerrar")
+    for sucursal in sucursales:
+        print(str(i) + ". " + sucursal.__str__())
+        i += 1
+    print(str(i) + ". No cerrar ninguna")
+    eleccion = entrada()
+    if eleccion <= 0 or eleccion > len(sucursales):
+        print("No se ha cerrado ninguna sucursal")
+        return
+    nombre = sucursales[eleccion - 1].getUbicacion()
+    sucursales[eleccion - 1].cerrar()
+    print("Se ha cerrado la sucursal de " + nombre)
+         
 def menuFinanzas():
     salir = False
     while salir == False:
-        Empresa.calcularFinanzas()
+        Empresa.calcularFinanzas(Sucursal.getSucursales())
         print("===Menú finanzas===")
         print("Qué acción desea realizar")
         print("1. Ver finanzas generales")
@@ -362,26 +432,35 @@ def menuFinanzas():
         if eleccion == 1:
             print(Empresa.verFinanzas())
         elif eleccion == 2:
-            pass
+            print(Sucursal.verSucursales())
         elif eleccion == 3:
             presupuesto = pedirPrestamo()
             if presupuesto == 0:
                 print("No se ha concretado ningún préstamo")
                 continue
             sucursal = comprarTerreno(presupuesto)
-            
+            habilitarSucursal(sucursal)
         elif eleccion == 4:
-            pass
+            if len(Sucursal.getSucursales()) == 1:
+                print("No podemos cerrar más sucursales, solo queda una")
+                continue
+            cerrarSucursal()
         elif eleccion == 5:
-            pass
+            paga = Empresa.pagarDeudas(Sucursal.getSucursales())
+            if paga == 0:
+                print("No tenemos fondos suficientes para realizar un abono")
+            else:
+                print("Se han pagado $" + str(round(paga/1000000)) + "M de la deuda")
         elif eleccion == 6:
-            salir == True
+            print("Adiós")
+            return
         else:
             print("Opción no disponible")
-            pass
 
 if __name__ == "__main__":
     Administrativo("Messi", 12345, 4488123)
+    Administrativo("Rosa Naranjo", 10101,98201)
+    Administrativo("Gustavo Cerati", 421234,54329)
     Banco("Bancolombia", 7, 900000000)
     Banco("Banco de Bogotá", 9, 1300000000)
     Banco("Avevillas", 4, 400000000)
@@ -391,31 +470,38 @@ if __name__ == "__main__":
     c = [0, 4]
     d = [4,8]
     Barrio("La Estrella", 7.99, a, d)
-    Barrio("Sabaneta", 6.99, b, d)
+    Barrio("Sabaneta", 6.99, b, d, True)
     Barrio("Intagüí", 5.99, c, d)
     Barrio("Envigado", 4.99, d, d)
-    Barrio("Robledo", 6.99, d, c)
+    Barrio("Robledo", 6.99, d, c, True)
     Barrio("Bello", 7.99, c, c)
     Barrio("Poblado", 4.99, b, c)
     Barrio("Niquía", 7.49, a, c)
     Barrio("Alpujarra", 3.99, a, b)
-    Barrio("Cisneros", 3.99, b, b)
+    Barrio("Cisneros", 3.99, b, b, True)
     Barrio("San Antonio", 3.99, c, b)
     Barrio("Parque Berrío", 3.99, d, b)
     Barrio("Prado", 4.49, d, a)
     Barrio("Caribe", 5.49, c, a)
     Barrio("Acevedo", 6.49, b, a)
     Barrio("Madera", 6.99, a, a)
-    Sucursal(1, "Cisneros", 35, [-3, -3], 57000000)
-    Sucursal(2, "Robledo", 30, [5, 3], 48000000)
-    Sucursal(3, "Sabaneta", 30, [-2, 6], 44000000)
-
-    print(Empresa.getSucursales())
+    e =Sucursal(1, "Cisneros", 35, [-3, -3], 57000000)
+    f = Sucursal(2, "Robledo", 30, [5, 3], 48000000)
+    g = Sucursal(3, "Sabaneta", 30, [-2, 6], 44000000)
+    e.comprarMesas(20, 10, 5, 24000000)
+    f.comprarMesas(15, 10, 5, 21500000)
+    g.comprarMesas(15, 10, 5, 21500000)
+    for i in range(5):
+        e.autoMesero(18000000)
+        f.autoMesero(18000000)
+        g.autoMesero(18000000)
+    for i in range(3):
+        e.autoChef(18000000)
+        f.autoChef(18000000)
+        g.autoChef(18000000)
+    
     verdad = False
     while verdad == False:
-        verdad = administradir = admin()
-        if administradir == -1:
-            print("Adiós")
-            break
+        verdad = admin()
     if verdad == True:
         menuFinanzas()
