@@ -1,13 +1,16 @@
+import sys
+import os
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__),'..','modelo')))
 from random import randint
-from .Esquina import Esquina
+from Esquina import Esquina
 
 class Barrio:
     CIUDAD = []
 
-    def __init__(self, nombre, costoEnvio, x, y):
+    def __init__(self, nombre, costoEnvio, x, y, sucursal = False):
         self.nombre = nombre
         self.costoEnvio = costoEnvio
-        self.sucursal = False
+        self.sucursal = sucursal
         self.esquinas = Esquina.determinarZona(x, y)
         Barrio.CIUDAD.append(self)
     
@@ -43,13 +46,25 @@ class Barrio:
 
     @staticmethod
     def espacio(valor):
-        n = round(valor/(10000000 * 1.5))
+        n = round(valor/(3500000))
         r = randint(15, n)
         if r > 50:
             return 50
         else:
             return r
-        
+    
+    @staticmethod
+    def quitar(sucursal):
+        for barrio in Barrio.CIUDAD:
+            if barrio.nombre == sucursal:
+                barrio.setSucursal(False)
+    
+    @staticmethod
+    def fromNombre(nombre):
+        for i in Barrio.CIUDAD:
+            if i.nombre == nombre:
+                return i
+            
     def getNombre(self): return self.nombre
 
     def getCostoEnvio(self): return self.costoEnvio
