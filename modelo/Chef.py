@@ -1,10 +1,11 @@
 from Empleado import Empleado
+import datetime
 
 class Chef(Empleado):
-    def __init__(self, id, nombre, direccion, edad, sucursal, antiguedad = 1, fecha = "28/01/2025", sueldo= 1500000):
+    def __init__(self, id, nombre, direccion, edad, sucursal, antiguedad = 1, sueldo= 1500000):
         super().__init__(id, nombre, direccion, edad, sueldo, "CHEF")
         self.antiguedad = antiguedad
-        self.fechaDeContratacion = fecha
+        self.fechaDeContratacion = datetime.date.today()
         self.SUCURSAL = sucursal
         self.ultimaCalificacion = 0
         self.pedidosActuales = 0
