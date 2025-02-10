@@ -28,7 +28,7 @@ class Sucursal:
                      Plato("Hamburguesa vegana", 17000, 6),
                      Plato("Picada", 30000, 7)]
         self.reservaciones = []
-        self.Chef = []
+        self.chef = []
         self.espacio = cantidad
         self.gastoRecursos = 850000 * cantidad
         Sucursal.sucursales.append(self)
