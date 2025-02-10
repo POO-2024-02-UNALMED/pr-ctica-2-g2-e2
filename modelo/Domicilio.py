@@ -1,11 +1,10 @@
 from datetime import datetime, timedelta
-from modelo import Barrio, Repartidor, EstadoPedido, Zona
+from modelo import Barrio, Repartidor, EstadoPedido
 
 class Domicilio:
-    def __init__(self, barrio: Barrio, repartidor: Repartidor, zona: Zona):
+    def __init__(self, barrio: Barrio, repartidor: Repartidor):
         self.barrio = barrio
         self.repartidor = repartidor
-        self.zona = zona
         self.estado = EstadoPedido.RECIBIDO
         self.tiempo_estimado_entrega = datetime.now() + timedelta(minutes=30)
         self.comentarios_entrega = ""
@@ -16,9 +15,6 @@ class Domicilio:
     
     def set_estado(self, estado: EstadoPedido):
         self.estado = estado
-    
-    def set_zona(self, zona: Zona):
-        self.zona = zona
     
     def get_distancia_km(self):
         return self.distancia_km
