@@ -19,3 +19,7 @@ class Administrativo:
         if self.contrasena == contrasena:
             return True
         return False
+    
+    @staticmethod
+    def nuevoAdmin(nombre, contrasena):
+        Administrativo.admins.append(Administrativo(nombre,contrasena))
