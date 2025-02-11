@@ -417,7 +417,6 @@ def cerrarSucursal():
 def menuFinanzas():
     salir = False
     while salir == False:
-        Empresa.calcularFinanzas(Sucursal.getSucursales())
         print("===Menú finanzas===")
         print("Qué acción desea realizar")
         print("1. Ver finanzas generales")
@@ -456,6 +455,47 @@ def menuFinanzas():
             return
         else:
             print("Opción no disponible")
+
+def menuPrincipal():
+    salir = False
+    while salir == False:
+        Empresa.calcularFinanzas(Sucursal.getSucursales())
+        print("===Menú principal===")
+        print("1. Finanzas")
+        print("2. Personal")
+        print("3. Órdenes")
+        print("4. Domicilios")
+        print("5. Reservaciones")
+        print("6. Guardar y salir")
+
+        print("Seleccione una opción")
+        eleccion = entrada()
+        if eleccion == 1:
+            verdad = False
+            while verdad == False:
+                verdad = admin()
+                if verdad == True: 
+                    menuFinanzas()
+                elif verdad == -1:
+                    break
+        
+        elif eleccion == 2:
+            pass
+        
+        elif eleccion == 3:
+            pass
+
+        elif eleccion == 4:
+            pass
+        
+        elif eleccion == 5:
+            pass
+
+        elif eleccion == 6:
+            salir = True
+
+        else:
+            print("Opción no válida, intente nuevamente")
 
 if __name__ == "__main__":
     Administrativo("Messi", 12345, 4488123)
@@ -500,8 +540,10 @@ if __name__ == "__main__":
         f.autoChef(18000000)
         g.autoChef(18000000)
     
+    menuPrincipal()
+    """
     verdad = False
     while verdad == False:
         verdad = admin()
     if verdad == True:
-        menuFinanzas()
+        menuFinanzas()"""
