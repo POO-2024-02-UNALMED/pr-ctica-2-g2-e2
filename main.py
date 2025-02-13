@@ -206,6 +206,9 @@ class PedirDomicilio:
             except ValueError:
                 print("Error: Entrada no válida. Por favor, ingrese un número.")
 
+##################
+# Excepciones de entrada
+##################
 
 def entrada():
     x = False
@@ -227,7 +230,11 @@ def ingresarNombre():
             continue
         x = True
     return nombre
-  
+
+##################
+# Verificación de admins
+##################
+
 def admin():
     print("Ingrese su número de cédula(para salir ingrese 0)")
     cedula = entrada()
@@ -253,6 +260,10 @@ def admin():
     else:
         print("Administrador no encontrado")
         return False
+
+##################
+# Métodos para administración de sucursales
+##################
 
 def pedirPrestamo():
     aceptado = False
@@ -499,53 +510,4 @@ def menuPrincipal():
             print("Opción no válida, intente nuevamente")
 
 if __name__ == "__main__":
-    """
-    Administrativo("Messi", 12345, 4488123)
-    Administrativo("Rosa Naranjo", 10101,98201)
-    Administrativo("Gustavo Cerati", 421234,54329)
-    Banco("Bancolombia", 7, 900000000)
-    Banco("Banco de Bogotá", 9, 1300000000)
-    Banco("Avevillas", 4, 400000000)
-    Banco("Davivienda", 5, 700000000)
-    a = [-8, -4]
-    b = [-4, 0]
-    c = [0, 4]
-    d = [4,8]
-    Barrio("La Estrella", 7.99, a, d)
-    Barrio("Sabaneta", 6.99, b, d, True)
-    Barrio("Intagüí", 5.99, c, d)
-    Barrio("Envigado", 4.99, d, d)
-    Barrio("Robledo", 6.99, d, c, True)
-    Barrio("Bello", 7.99, c, c)
-    Barrio("Poblado", 4.99, b, c)
-    Barrio("Niquía", 7.49, a, c)
-    Barrio("Alpujarra", 3.99, a, b)
-    Barrio("Cisneros", 3.99, b, b, True)
-    Barrio("San Antonio", 3.99, c, b)
-    Barrio("Parque Berrío", 3.99, d, b)
-    Barrio("Prado", 4.49, d, a)
-    Barrio("Caribe", 5.49, c, a)
-    Barrio("Acevedo", 6.49, b, a)
-    Barrio("Madera", 6.99, a, a)
-    e =Sucursal(1, "Cisneros", 35, [-3, -3], 57000000)
-    f = Sucursal(2, "Robledo", 30, [5, 3], 48000000)
-    g = Sucursal(3, "Sabaneta", 30, [-2, 6], 44000000)
-    e.comprarMesas(20, 10, 5, 24000000)
-    f.comprarMesas(15, 10, 5, 21500000)
-    g.comprarMesas(15, 10, 5, 21500000)
-    for i in range(5):
-        e.autoMesero(18000000)
-        f.autoMesero(18000000)
-        g.autoMesero(18000000)
-    for i in range(3):
-        e.autoChef(18000000)
-        f.autoChef(18000000)
-        g.autoChef(18000000)
-    """
-    menuPrincipal()
-    """
-    verdad = False
-    while verdad == False:
-        verdad = admin()
-    if verdad == True:
-        menuFinanzas()"""
+    menuPrincipal()  
