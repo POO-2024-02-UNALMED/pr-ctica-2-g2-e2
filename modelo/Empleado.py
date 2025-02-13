@@ -5,13 +5,14 @@ from random import randint
 class Empleado():
     empleados = []
 
-    def __init__(self, id, nombre, direccion, edad, sueldo, rol):
+    def __init__(self, datos, id, nombre, direccion, edad, sueldo, rol):
         self.ID = id
         self.NOMBRE = nombre
         self.DIRECCION  = direccion
         self.EDAD = edad
         self.sueldo = sueldo
         self.ROL = rol
+        datos.empleados.append(self)
         Empleado.empleados.append(self)
 
     def __str__(self):
@@ -45,6 +46,9 @@ class Empleado():
 
     @staticmethod
     def getPersonal(): return Empleado.empleados
+
+    @staticmethod
+    def setPersonal(personal): Empleado.empleados = personal
 
     def getId(self): return self.ID
 
