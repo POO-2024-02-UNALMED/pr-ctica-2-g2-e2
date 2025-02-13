@@ -2,8 +2,8 @@ from Empleado import Empleado
 import datetime
 
 class Chef(Empleado):
-    def __init__(self, id, nombre, direccion, edad, sucursal, antiguedad = 1, sueldo= 1500000):
-        super().__init__(id, nombre, direccion, edad, sueldo, "CHEF")
+    def __init__(self, datos, id, nombre, direccion, edad, sucursal, antiguedad = 1, sueldo= 1500000):
+        super().__init__(datos, id, nombre, direccion, edad, sueldo, "CHEF")
         self.antiguedad = antiguedad
         self.fechaDeContratacion = datetime.date.today()
         self.SUCURSAL = sucursal
