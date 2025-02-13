@@ -63,17 +63,17 @@ class Sucursal:
             i += 1
         return string
     
-    def autoMesero(self, auto = 0):
+    def autoMesero(self, dataManager, auto = 0):
         self.presupuesto += auto
         nombre = Empleado.generarNombre()
-        x = Mesero(Empleado.generarDocumento(), nombre, "CLL12_CR23", 20, self)
+        x = Mesero(dataManager, Empleado.generarDocumento(), nombre, "CLL12_CR23", 20, self)
         self.anadirMesero(x)
         return nombre
     
-    def autoChef(self, auto = 0):
+    def autoChef(self, dataManager, auto = 0):
         self.presupuesto += auto
         nombre = Empleado.generarNombre()
-        y = Chef(Empleado.generarDocumento(), nombre, "CLL12_CR23", 25, self)
+        y = Chef(dataManager, Empleado.generarDocumento(), nombre, "CLL12_CR23", 25, self)
         self.anadirChef(y)
         return nombre
 
