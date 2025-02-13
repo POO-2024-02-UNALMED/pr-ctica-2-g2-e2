@@ -358,7 +358,7 @@ def comprarTerreno(presupuesto):
     new = Sucursal.getSucursales()[-1].getId()
     return Sucursal(new + 1, nombre, espacio, direccion, presupuesto)
 
-def habilitarSucursal(sucursal):
+def habilitarSucursal(dataManager, sucursal):
     cantidad = sucursal.getCantidad()
     bien = False
     while bien == False:
@@ -382,10 +382,10 @@ def habilitarSucursal(sucursal):
     sucursal.restarPresupuesto(10000000)
     print("Se ha comprado un cocina profesional de $10.000.000")
     for i in range(5):
-        nombre = sucursal.autoMesero()
+        nombre = sucursal.autoMesero(dataManager)
         print("Se ha contaratado a " + nombre + " para trabajar como mesero")
     for i in range(3):
-        nombre = sucursal.autoChef()
+        nombre = sucursal.autoChef(dataManager)
         print("Se ha contaratado a " + nombre + " para trabajar como chef")
     print("Ingrese el nombre del administrador que se va a contratar")
     admin = ingresarNombre()
@@ -457,6 +457,7 @@ def menuFinanzas():
             print("Opción no disponible")
 
 def menuPrincipal():
+    dataManager = DataManager()
     salir = False
     while salir == False:
         Empresa.calcularFinanzas(Sucursal.getSucursales())
@@ -498,6 +499,7 @@ def menuPrincipal():
             print("Opción no válida, intente nuevamente")
 
 if __name__ == "__main__":
+    """
     Administrativo("Messi", 12345, 4488123)
     Administrativo("Rosa Naranjo", 10101,98201)
     Administrativo("Gustavo Cerati", 421234,54329)
@@ -539,7 +541,7 @@ if __name__ == "__main__":
         e.autoChef(18000000)
         f.autoChef(18000000)
         g.autoChef(18000000)
-    
+    """
     menuPrincipal()
     """
     verdad = False
