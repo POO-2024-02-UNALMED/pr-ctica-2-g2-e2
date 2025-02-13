@@ -1,3 +1,12 @@
+import sys 
+import os
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__),'..','modelo')))
+from modelo.Administrativo import Administrativo
+from modelo.Banco import Banco
+from modelo.Barrio import Barrio
+from modelo.Sucursal import Sucursal
+from modelo.Empleado import Empleado
+from modelo.Empresa import Empresa
 import threading
 from typing import List
 
@@ -14,8 +23,11 @@ class DataManager:
         self.next_pedido_id = threading.Lock()
         self.next_incidencia_id = threading.Lock()
         self.sucursales = []
-        self.ciudad = [None] * 16
+        self.ciudad = []
+        self.bancos = []
+        self.empleados = []
         self.reservaciones = []
+        self.deudas = 12000000
         self.cargar_datos_prueba()
 
     def borrar_datos(self):
@@ -28,7 +40,6 @@ class DataManager:
         self.domicilios.clear()
         self.admins.clear()
         self.sucursales.clear()
-        self.ciudad = [None] * 16
         print("Todos los datos han sido borrados correctamente.")
 
     def cargar_datos_prueba(self):
@@ -52,11 +63,66 @@ class DataManager:
         ])
         
         self.admins.extend([
-            {"nombre": "Lionel Messi", "id": 12345},
-            {"nombre": "Elena Nito", "id": 10453},
-            {"nombre": "Alma Marcela Gozo", "id": 42012},
+            Administrativo("Messi", 12345, 4488123),
+            Administrativo("Rosa Naranjo", 10101,98201),
+            Administrativo("Gustavo Cerati", 421234,54329)
         ])
+        Administrativo.admins = self.admins
+
+        self.bancos.extend([
+            Banco("Bancolombia", 7, 900000000),
+            Banco("Banco de Bogotá", 9, 1300000000),
+            Banco("Avevillas", 4, 400000000),
+            Banco("Davivienda", 5, 700000000)
+        ])
+        Banco.bancos = self.bancos
+        a = [-8, -4]
+        b = [-4, 0]
+        c = [0, 4]
+        d = [4,8]
+
+        self.ciudad.extend([
+            Barrio("La Estrella", 7.99, a, d),
+            Barrio("Sabaneta", 6.99, b, d, True),
+            Barrio("Intagüí", 5.99, c, d),
+            Barrio("Envigado", 4.99, d, d),
+            Barrio("Robledo", 6.99, d, c, True),
+            Barrio("Bello", 7.99, c, c),
+            Barrio("Poblado", 4.99, b, c),
+            Barrio("Niquía", 7.49, a, c),
+            Barrio("Alpujarra", 3.99, a, b),
+            Barrio("Cisneros", 3.99, b, b, True),
+            Barrio("San Antonio", 3.99, c, b),
+            Barrio("Parque Berrío", 3.99, d, b),
+            Barrio("Prado", 4.49, d, a),
+            Barrio("Caribe", 5.49, c, a),
+            Barrio("Acevedo", 6.49, b, a),
+            Barrio("Madera", 6.99, a, a)
+            ])
+
+        Barrio.CIUDAD = self.ciudad
         
+        e =Sucursal(1, "Cisneros", 35, [-3, -3], 57000000)
+        f = Sucursal(2, "Robledo", 30, [5, 3], 48000000)
+        g = Sucursal(3, "Sabaneta", 30, [-2, 6], 44000000)
+        e.comprarMesas(20, 10, 5, 24000000)
+        f.comprarMesas(15, 10, 5, 21500000)
+        g.comprarMesas(15, 10, 5, 21500000)
+        for i in range(5):
+            e.autoMesero(self, 18000000)
+            f.autoMesero(self, 18000000)
+            g.autoMesero(self, 18000000)
+        for i in range(3):
+            e.autoChef(self, 18000000)
+            f.autoChef(self, 18000000)
+            g.autoChef(self, 18000000)
+        self.sucursales.extend([e, f, g])
+        Sucursal.sucursales = self.sucursales
+        
+        Empleado.setPersonal(self.empleados)
+        
+        Empresa.deudas = self.deudas
+
         print("Datos de prueba cargados correctamente.")
     
     def agregar_cliente(self, cliente):
@@ -105,3 +171,6 @@ class DataManager:
     
     def get_sucursales(self):
         return self.sucursales
+    
+    def get_admins(self):
+        return self.admins
