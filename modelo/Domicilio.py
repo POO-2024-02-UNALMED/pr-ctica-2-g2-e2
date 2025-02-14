@@ -1,15 +1,21 @@
 from datetime import datetime, timedelta
-from modelo import Barrio, Repartidor, EstadoPedido
+from modelo.Barrio import Barrio
+from modelo.Repartidor import Repartidor
+from modelo.EstadoPedido import EstadoPedido
 
 class Domicilio:
-    def __init__(self, barrio: Barrio, repartidor: Repartidor):
+    def __init__(self, cliente, barrio: Barrio, repartidor: Repartidor):
+        self.cliente = cliente
         self.barrio = barrio
         self.repartidor = repartidor
         self.estado = EstadoPedido.RECIBIDO
         self.tiempo_estimado_entrega = datetime.now() + timedelta(minutes=30)
         self.comentarios_entrega = ""
         self.distancia_km = 0.0
-
+        
+    def calcular_costo_envio(self):
+        return self.barrio.get_costo_envio()
+    
     def set_repartidor(self, repartidor: Repartidor):
         self.repartidor = repartidor
     
@@ -28,5 +34,3 @@ class Domicilio:
     def set_barrio(self, barrio: Barrio):
         self.barrio = barrio
     
-    def get_costo_envio(self):
-        return self.barrio.get_costo_envio() if self.barrio else 0.0

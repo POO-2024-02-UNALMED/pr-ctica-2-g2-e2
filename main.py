@@ -49,7 +49,7 @@ class GestorPedidos:
         if self.es_hora_pico():
             self.aplicar_recargo_pico(pedido)
 
-        self.data_manager.agregar_pedido(cliente, pedido)
+        self.data_manager.agregar_pedido(cliente)
         return pedido
 
     def asignar_repartidor_disponible(self):
@@ -120,12 +120,11 @@ class PedirDomicilio:
                     print("No se seleccionó un barrio válido.")
                     return
                 
-                pedido = self.gestor_pedidos.crear_pedido(cliente, productos_seleccionados, barrio_seleccionado)
+                pedido = self.gestor_pedidos.crear_pedido(cliente, [p for p in productos_seleccionados if isinstance(p, Producto)], barrio_seleccionado)
                 self.mostrar_resumen_pedido(pedido)
             except Exception as e:
                 print(f"Error inesperado: {e}")
-        
-        self.gestionar_pedidos()
+        pass
 
     def seleccionar_barrio(self):
         ciudad = self.data_manager.get_ciudad()
@@ -169,7 +168,7 @@ class PedirDomicilio:
         print("\nProductos disponibles:")
         for producto in productos_disponibles:
             print(f"{producto.id}. {producto.nombre} - ${producto.precio}")
-
+        
         productos_seleccionados = []
         while True:
             producto_id = self.entrada("ID del producto (0 para finalizar): ")
@@ -187,7 +186,7 @@ class PedirDomicilio:
         print("\n=== Resumen del Pedido ===")
         print(f"ID Pedido: {pedido.id}")
         print("Productos:")
-        for producto in pedido.productos:
+        for producto in [p for p in pedido.productos]:
             print(f"- {producto.nombre}: ${producto.precio:.2f}")
         print(f"\nBarrio: {pedido.domicilio.barrio}")
         print(f"Repartidor: {pedido.domicilio.repartidor.nombre}")
@@ -498,7 +497,8 @@ def menuPrincipal():
             pass
 
         elif eleccion == 4:
-            pass
+            pedir_domicilio = PedirDomicilio(dataManager)
+            pedir_domicilio.realizar_pedido()
         
         elif eleccion == 5:
             pass

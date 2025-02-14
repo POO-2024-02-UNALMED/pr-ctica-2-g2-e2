@@ -8,9 +8,17 @@ class EstadoPedido(Enum):
     CANCELADO = (5, "Cancelado")
 
     def __init__(self, codigo, descripcion):
-        self.codigo = codigo
-        self.descripcion = descripcion
+        self._codigo = codigo
+        self._descripcion = descripcion
 
+    @property
+    def codigo(self):
+        return self._codigo
+
+    @property
+    def descripcion(self):
+        return self._descripcion
+    
     @staticmethod
     def from_codigo(codigo):
         for estado in EstadoPedido:

@@ -67,7 +67,7 @@ class Barrio:
             
     def getNombre(self): return self.nombre
 
-    def getCostoEnvio(self): return self.costoEnvio
+    def get_costo_envio(self): return self.costoEnvio
 
     def tieneSucursal(self): return self.sucursal
 
