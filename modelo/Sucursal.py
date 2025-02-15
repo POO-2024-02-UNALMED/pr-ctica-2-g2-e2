@@ -76,6 +76,11 @@ class Sucursal:
         y = Chef(dataManager, Empleado.generarDocumento(), nombre, "CLL12_CR23", 25, self)
         self.anadirChef(y)
         return nombre
+    
+    def mostrarMenu(self):
+        string = ""
+        for i in self.MENU:
+            if i != self.MENU[-1] and i != self.MENU[0]:
 
     def comprarMesas(self, pequenas, medianas, grandes, auto = 0):
         self.presupuesto += auto
