@@ -259,8 +259,18 @@ class OrdenFisica:
                         pedido1.append(plato)
         pedido = PedidoFIsico()
 
-class PedidoFIsico():
-    pass
+class PedidoFIsico(OrdenFisica):
+    def __init__(self, mesa, cliente, mesero, sucursal, numero, chef, pedido):
+        super().__init__(mesa, cliente, mesero, sucursal)
+        self.numeroDePersonas = numero
+        self.chef = chef
+        self.pedido = pedido
+    
+    def getNumeroDePersonas(self): return self.numeroDePersonas
+
+    def getChef(self): return self.chef
+
+    def getPedido(self): return self.pedido
 ##################
 # Excepciones de entrada
 ##################
