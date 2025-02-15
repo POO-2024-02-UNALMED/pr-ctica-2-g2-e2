@@ -236,14 +236,31 @@ class OrdenFisica:
             cantPer = entrada()
         pedido1 = []
         platoF = []
-        print(self.SUCURSAL.getMenu())
+        print(self.SUCURSAL.mostrarMenu())
         if cantPer < 6 and cantPer > 0:
             i = 0
-            platos = 0
+            plato = 0
             while i < cantPer:
                 print("¿Qué plato desea ordenar?")
-                for plato2 in self.SUCURSAL.l():
-                    pass
+                plato = entrada()
+                for plato2 in self.SUCURSAL.getMenu():
+                    if plato2.getId() == plato:
+                        print("Pedido confirmado de " + plato2.getNombre())
+                        platoF.append(plato2)
+                pedido1.append(plato)
+            i += 1
+        if cantPer >= 6:
+            plato = 0
+            print("La cantidad de platos es mayor a 5, por lo tanto se le dará el mismo plato a todos los invitados, escoja cuál")
+            plato = entrada()
+            for i in range(cantPer):
+                for plato2 in self.SUCURSAL.getMenu():
+                    if plato2.getId() == plato:
+                        pedido1.append(plato)
+        pedido = PedidoFIsico()
+
+class PedidoFIsico():
+    pass
 ##################
 # Excepciones de entrada
 ##################
