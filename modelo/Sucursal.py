@@ -81,9 +81,9 @@ class Sucursal:
         string = ""
         for i in self.MENU:
             if i.ID == len(self.MENU):
-                string = string + i.__str__()
+                string = string + str(i.ID) + ". " + i.__str__()
             else:
-                string = string + i.__str__() + "\n"
+                string = string + str(i.ID) + ". " + i.__str__() + "\n"
         return string
 
     def comprarMesas(self, pequenas, medianas, grandes, auto = 0):
