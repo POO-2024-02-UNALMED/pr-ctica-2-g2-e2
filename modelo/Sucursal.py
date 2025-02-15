@@ -80,7 +80,11 @@ class Sucursal:
     def mostrarMenu(self):
         string = ""
         for i in self.MENU:
-            if i != self.MENU[-1] and i != self.MENU[0]:
+            if i.ID == len(self.MENU):
+                string = string + i.__str__()
+            else:
+                string = string + i.__str__() + "\n"
+        return string
 
     def comprarMesas(self, pequenas, medianas, grandes, auto = 0):
         self.presupuesto += auto
