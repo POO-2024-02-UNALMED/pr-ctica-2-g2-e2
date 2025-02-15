@@ -124,6 +124,7 @@ class PedirDomicilio:
                 self.mostrar_resumen_pedido(pedido)
             except Exception as e:
                 print(f"Error inesperado: {e}")
+        
         pass
 
     def seleccionar_barrio(self):
@@ -205,6 +206,44 @@ class PedirDomicilio:
             except ValueError:
                 print("Error: Entrada no válida. Por favor, ingrese un número.")
 
+####################
+# Clase para pedir órdenes físicas
+####################
+class OrdenFisica:
+    def __init__(self, mesa, cliente, mesero, sucursal):
+        self.mesa = mesa
+        self.CLIENTE = cliente
+        self.mesero = mesero
+        self.SUCURSAL = sucursal
+    
+    def getMesa(self): return self.mesa
+
+    def getCliente(self): return self.CLIENTE
+
+    def getMesero(self): return self.mesero
+
+    def getSucursal(self): return self.SUCURSAL
+
+    def setMesa(self, mesa): self.mesa = mesa
+
+    def setMesero(self, mesero): self.mesero = mesero
+
+    def hacerPedido(self):
+        print("Ingrese cuántos platos desea ordenar")
+        cantPer = entrada()
+        while cantPer <= 0:
+            print("El número de platos debe ser mayor a 0")
+            cantPer = entrada()
+        pedido1 = []
+        platoF = []
+        print(self.SUCURSAL.getMenu())
+        if cantPer < 6 and cantPer > 0:
+            i = 0
+            platos = 0
+            while i < cantPer:
+                print("¿Qué plato desea ordenar?")
+                for plato2 in self.SUCURSAL.l():
+                    pass
 ##################
 # Excepciones de entrada
 ##################
@@ -263,7 +302,6 @@ def admin():
 ##################
 # Métodos para administración de sucursales
 ##################
-
 def pedirPrestamo():
     aceptado = False
     eleccion = -1
@@ -465,6 +503,49 @@ def menuFinanzas():
             return
         else:
             print("Opción no disponible")
+
+##################
+# Métodos para administración pedidos físicos
+##################
+def ordenFisica():
+    cliente = Cliente(1, "Osito69", "CLL2_CRR3", "50774 63 m13764")
+    i = 0
+    eleccion= 0
+
+    for sucursal in Sucursal.getSucursales():
+        i += 1
+        print(str(i) + ". " + sucursal)
+    print("Indique en cuál sucursal se está realizando la orden")
+    while eleccion < 1 or eleccion > len(Sucursal.getSucursales()):
+        eleccion = entrada()
+        if eleccion < 1 or eleccion > len(Sucursal.getSucursales()):
+            print("Esa opción no está disponible")
+    sucursal = Sucursal.getSucursales()[eleccion - 1]
+    print("Ingrese la cantidad de personas que se presentan con usted(Incluyéndolo a usted)")
+    cantidad = 0
+    while cantidad < 1 or cantidad > 8:
+        cantidad = entrada()
+        if cantidad < 1 or cantidad > 8:
+            print("No es posible registrar esa cantidad")
+    mes = None
+    for mesa in sucursal.getMesas():
+        if mesa.getCapacidad() >= cantidad and mesa.estaReservada() == False:
+            mes = mesa
+            mesa.setReserva(True)
+            break
+    if mes == None:
+        print("No hay mesas disponibles")
+        return
+    meso = None
+    for mesero in sucursal.getMeseros():
+        if mesero.isDisponible() == True:
+            meso = mesero
+            mesero.setDisponible(False)
+            break
+    if meso == None:
+        print("No hay nadie que pueda atender en este momento")
+        return
+    orden =
 
 def menuPrincipal():
     dataManager = DataManager()
