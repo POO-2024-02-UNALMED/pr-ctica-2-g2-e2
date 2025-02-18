@@ -14,6 +14,9 @@ from modelo.EstadoPedido import EstadoPedido
 from modelo.Producto import Producto
 from baseDeDatos.DataManager import DataManager
 from modelo.Chef import Chef
+from OrdenFisica import OrdenFisica
+from PedidoFisico import PedidoFisico
+from excepcion import entrada, ingresarNombre
 
 ####################
 # Clase para pedir domicilio
@@ -210,139 +213,7 @@ class PedirDomicilio:
 ####################
 # Clase para pedir órdenes físicas
 ####################
-class OrdenFisica:
-    def __init__(self, mesa, cliente, mesero, sucursal):
-        self.mesa = mesa
-        self.CLIENTE = cliente
-        self.mesero = mesero
-        self.SUCURSAL = sucursal
-    
-    def getMesa(self): return self.mesa
 
-    def getCliente(self): return self.CLIENTE
-
-    def getMesero(self): return self.mesero
-
-    def getSucursal(self): return self.SUCURSAL
-
-    def setMesa(self, mesa): self.mesa = mesa
-
-    def setMesero(self, mesero): self.mesero = mesero
-
-    def hacerPedido(self):
-        print("Ingrese cuántos platos desea ordenar")
-        cantPer = entrada()
-        while cantPer <= 0:
-            print("El número de platos debe ser mayor a 0")
-            cantPer = entrada()
-        pedido1 = []
-        platoF = []
-        print(self.SUCURSAL.mostrarMenu())
-        if cantPer < 6 and cantPer > 0:
-            i = 0
-            plato = 0
-            while i < cantPer:
-                print("¿Qué plato desea ordenar?")
-                plato = entrada()
-                for plato2 in self.SUCURSAL.getMenu():
-                    if plato2.getId() == plato:
-                        print("Pedido confirmado de " + plato2.getNombre())
-                        platoF.append(plato2)
-                pedido1.append(plato)
-            i += 1
-        if cantPer >= 6:
-            plato = 0
-            print("La cantidad de platos es mayor a 5, por lo tanto se le dará el mismo plato a todos los invitados, escoja cuál")
-            plato = entrada()
-            for i in range(cantPer):
-                for plato2 in self.SUCURSAL.getMenu():
-                    if plato2.getId() == plato:
-                        pedido1.append(plato)
-        pedido = PedidoFIsico(self.mesa, self.CLIENTE, self.mesero, self.SUCURSAL, cantPer, Chef.asignar(), pedido1)
-        pedido.facturacion()
-
-
-class PedidoFIsico(OrdenFisica):
-    def __init__(self, mesa, cliente, mesero, sucursal, numero, chef, pedido):
-        super().__init__(mesa, cliente, mesero, sucursal)
-        self.numeroDePersonas = numero
-        self.chef = chef
-        self.pedido = pedido
-    
-    def getNumeroDePersonas(self): return self.numeroDePersonas
-
-    def getChef(self): return self.chef
-
-    def getPedido(self): return self.pedido
-    
-    def facturacion(self):
-        precio = 0
-        for plato in self.pedido:
-            if plato == self.pedido[0]:
-                platos = plato.getNombre() + ": $" +str(plato.getPrecio()) + "\n"
-            else:
-                platos = platos + plato.getNombre() + ": " +str(plato.getPrecio()) + "\n"
-            precio += plato.plato.getPrecio()
-        
-        descuento = 0
-        if precio <= 20000:
-            self.CLIENTE.sumar_puntos(1)
-        elif precio <= 100000:
-            self.CLIENTE.sumar_puntos(2)
-        else:
-            self.CLIENTE.sumar_puntos(3)
-        
-        if self.CLIENTE.get_puntos() >= 20:
-            descuento = precio * 0.4
-
-        self.SUCURSAL.aumentarPresupuesto(precio - descuento)
-        print("Tierra del sabor: " + self.SUCURSAL.getUbicacion() + "\n" +
-                "Cliente titular: " + self.Cliente.get_nombre() + "\n" +
-                "Mesero encargado: " + self.mesero.getNombre() + "\n" +
-                "Chef encargado: " + self.chef.getNombre() + "\n" +
-                "Mesa #" + self.mesa.getId() + "\n" + 
-                "Productos: + \n" +
-                platos + 
-                "Valor de la compra: $" + str(precio) + "\n" +
-                "Descuento por ser cliente frecuente: $" + str(descuento) + "\n" + 
-                "Precio total: $" + str(precio - descuento))
-        print("Ingrese la calificación que desea darle al servicio(número entre 1 y 5)")
-        calificacion = 0
-        while calificacion < 1 or calificacion > 5:
-            calificacion = entrada()
-            if calificacion < 1 or calificacion > 5:
-                print("Valor incorrecto, debe ser un número entre 1 y 5")
-        self.CLIENTE.dar_calificacion(self.mesero, self.chef, calificacion)
-
-
-##################
-# Excepciones de entrada
-##################
-
-def entrada():
-    x = False
-    while (x == False):
-        try:
-            cedula = int(input())
-        except ValueError:
-            print("Error de entrada, por favor ingrese un número")
-            continue
-        x = True
-    return cedula
-
-def ingresarNombre():
-    x = False
-    while x == False:
-        nombre = input()
-        if "1" in nombre or "2" in nombre or "3" in nombre or "4" in nombre or "5" in nombre or "6" in nombre or "7" in nombre or "8" in nombre or "9" in nombre or "0" in nombre or "_" in nombre or "," in nombre or "-" in nombre or "." in nombre:
-            print("Caracter no permitido, ingrese únicamente letras")
-            continue
-        x = True
-    return nombre
-
-##################
-# Verificación de admins
-##################
 
 def admin():
     print("Ingrese su número de cédula(para salir ingrese 0)")
@@ -585,7 +456,7 @@ def ordenFisica():
 
     for sucursal in Sucursal.getSucursales():
         i += 1
-        print(str(i) + ". " + sucursal)
+        print(str(i) + ". " + sucursal.__str__())
     print("Indique en cuál sucursal se está realizando la orden")
     while eleccion < 1 or eleccion > len(Sucursal.getSucursales()):
         eleccion = entrada()
@@ -616,7 +487,10 @@ def ordenFisica():
     if meso == None:
         print("No hay nadie que pueda atender en este momento")
         return
-    orden =
+    orden = OrdenFisica(mes, cliente, meso, sucursal)
+    args = orden.hacerPedido()
+    pedido = PedidoFisico(args[0], args[1], args[2], args[3], args[4], args[5], args[6])
+    pedido.facturacion()
 
 def menuPrincipal():
     dataManager = DataManager()
@@ -646,7 +520,8 @@ def menuPrincipal():
             pass
         
         elif eleccion == 3:
-            client = PedirDomicilio.seleccionar_o_crear_cliente()
+            ordenFisica()
+            print("Gracias por su compra")
 
         elif eleccion == 4:
             pedir_domicilio = PedirDomicilio(dataManager)
