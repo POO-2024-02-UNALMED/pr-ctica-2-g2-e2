@@ -271,6 +271,10 @@ class PedidoFIsico(OrdenFisica):
     def getChef(self): return self.chef
 
     def getPedido(self): return self.pedido
+
+    def facturacion(self):
+        pedido = self.pedido
+        
 ##################
 # Excepciones de entrada
 ##################
