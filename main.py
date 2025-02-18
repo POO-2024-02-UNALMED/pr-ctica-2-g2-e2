@@ -13,6 +13,7 @@ from modelo.Pedido import Pedido
 from modelo.EstadoPedido import EstadoPedido
 from modelo.Producto import Producto
 from baseDeDatos.DataManager import DataManager
+from modelo.Chef import Chef
 
 ####################
 # Clase para pedir domicilio
@@ -257,7 +258,9 @@ class OrdenFisica:
                 for plato2 in self.SUCURSAL.getMenu():
                     if plato2.getId() == plato:
                         pedido1.append(plato)
-        pedido = PedidoFIsico()
+        pedido = PedidoFIsico(self.mesa, self.CLIENTE, self.mesero, self.SUCURSAL, cantPer, Chef.asignar(), pedido1)
+        pedido.facturacion()
+
 
 class PedidoFIsico(OrdenFisica):
     def __init__(self, mesa, cliente, mesero, sucursal, numero, chef, pedido):
@@ -271,10 +274,47 @@ class PedidoFIsico(OrdenFisica):
     def getChef(self): return self.chef
 
     def getPedido(self): return self.pedido
-
+    
     def facturacion(self):
-        pedido = self.pedido
+        precio = 0
+        for plato in self.pedido:
+            if plato == self.pedido[0]:
+                platos = plato.getNombre() + ": $" +str(plato.getPrecio()) + "\n"
+            else:
+                platos = platos + plato.getNombre() + ": " +str(plato.getPrecio()) + "\n"
+            precio += plato.plato.getPrecio()
         
+        descuento = 0
+        if precio <= 20000:
+            self.CLIENTE.sumar_puntos(1)
+        elif precio <= 100000:
+            self.CLIENTE.sumar_puntos(2)
+        else:
+            self.CLIENTE.sumar_puntos(3)
+        
+        if self.CLIENTE.get_puntos() >= 20:
+            descuento = precio * 0.4
+
+        self.SUCURSAL.aumentarPresupuesto(precio - descuento)
+        print("Tierra del sabor: " + self.SUCURSAL.getUbicacion() + "\n" +
+                "Cliente titular: " + self.Cliente.get_nombre() + "\n" +
+                "Mesero encargado: " + self.mesero.getNombre() + "\n" +
+                "Chef encargado: " + self.chef.getNombre() + "\n" +
+                "Mesa #" + self.mesa.getId() + "\n" + 
+                "Productos: + \n" +
+                platos + 
+                "Valor de la compra: $" + str(precio) + "\n" +
+                "Descuento por ser cliente frecuente: $" + str(descuento) + "\n" + 
+                "Precio total: $" + str(precio - descuento))
+        print("Ingrese la calificación que desea darle al servicio(número entre 1 y 5)")
+        calificacion = 0
+        while calificacion < 1 or calificacion > 5:
+            calificacion = entrada()
+            if calificacion < 1 or calificacion > 5:
+                print("Valor incorrecto, debe ser un número entre 1 y 5")
+        self.CLIENTE.dar_calificacion(self.mesero, self.chef, calificacion)
+
+
 ##################
 # Excepciones de entrada
 ##################
@@ -606,7 +646,7 @@ def menuPrincipal():
             pass
         
         elif eleccion == 3:
-            pass
+            client = PedirDomicilio.seleccionar_o_crear_cliente()
 
         elif eleccion == 4:
             pedir_domicilio = PedirDomicilio(dataManager)
