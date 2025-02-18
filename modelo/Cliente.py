@@ -54,7 +54,6 @@ class Cliente:
             calificacion = 1
         if calificacion > 5:
             calificacion = 5
-        
         mesero.setCalificacion(calificacion)
         mesero.ganarPuntos(calificacion)
         chef.setCalificacion(calificacion)
