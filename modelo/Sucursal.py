@@ -132,6 +132,8 @@ class Sucursal:
         parte = liquidacion / len(Sucursal.sucursales)
         for sucursal in Sucursal.sucursales:
             sucursal.presupuesto += parte
+
+    def aumentarPresupuesto(self, valor): self.presupuesto += valor
     
     def getCantidad(self): return self.espacio
 
