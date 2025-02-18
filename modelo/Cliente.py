@@ -49,20 +49,16 @@ class Cliente:
     def agregar_pedido(self, pedido):
         self.historial_pedidos.append(pedido)
     
-    def dar_calificacion(self, mesero, chef):
-        while True:
-            try:
-                calificacion = int(input("Ingrese la calificación para el servicio (1-5): "))
-                if 1 <= calificacion <= 5:
-                    break
-                print("Calificación fuera de rango. Ingrese un número entre 1 y 5.")
-            except ValueError:
-                print("Entrada no válida. Por favor, ingrese un número entero.")
+    def dar_calificacion(self, mesero, chef, calificacion):
+        if calificacion < 1:
+            calificacion = 1
+        if calificacion > 5:
+            calificacion = 5
         
-        mesero.set_ultima_calificacion(calificacion)
-        mesero.ganar_puntos(calificacion)
-        chef.set_ultima_calificacion(calificacion)
-        chef.ganar_puntos(calificacion)
+        mesero.setCalificacion(calificacion)
+        mesero.ganarPuntos(calificacion)
+        chef.setCalificacion(calificacion)
+        chef.ganarPuntos(calificacion)
     
     def sumar_puntos(self, suma: int):
         if suma in [1, 2, 3]:
