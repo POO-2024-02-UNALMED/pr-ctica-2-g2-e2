@@ -49,7 +49,9 @@ class Chef(Empleado):
         
         if self.puntaje >= self.proximoObjetivo:
             aumento = round(self.sueldo * 0.1)
-            self.sueldo += aumento
+            x = self.getSueldo()
+            x += aumento
+            self.setSueldo(x)
             self.puntaje = 0
             self.proximoObjetivo = 50    
     
