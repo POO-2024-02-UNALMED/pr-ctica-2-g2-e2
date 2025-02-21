@@ -5,7 +5,11 @@ from Agotado import Agotado
 
 class Stock(Agotado):
 
-    def __init__(self):
+    def __init__(self, producto):
         super().__init__()
-        print("los productos para poder cocinar el producto solicitado")
+        self.producto = producto
+        self.mensaje()
+    
+    def mensaje(self):
+        print("los productos para poder cocinar el producto: {}".format(self.producto))
         print("Por favor escoja otro")
