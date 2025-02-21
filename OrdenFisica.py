@@ -1,4 +1,4 @@
-from excepcion import entrada
+from entrada import entrada
 from modelo.Chef import Chef
 
 class OrdenFisica:
