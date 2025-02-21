@@ -16,7 +16,8 @@ from baseDeDatos.DataManager import DataManager
 from modelo.Chef import Chef
 from OrdenFisica import OrdenFisica
 from PedidoFisico import PedidoFisico
-from excepcion import entrada, ingresarNombre
+from entrada import entrada, ingresarNombre
+from excepcion.One_Sucursal import One_Sucursal
 
 ####################
 # Clase para pedir domicilio
@@ -430,8 +431,13 @@ def menuFinanzas():
             sucursal = comprarTerreno(presupuesto)
             habilitarSucursal(sucursal)
         elif eleccion == 4:
-            if len(Sucursal.getSucursales()) == 1:
-                print("No podemos cerrar más sucursales, solo queda una")
+            try:
+                if len(Sucursal.getSucursales()) == 1:
+                    name = Sucursal.getSucursales()[0].getUbicacion()
+                    error = One_Sucursal(name)
+                    raise error
+            except One_Sucursal:
+                error.mensaje()
                 continue
             cerrarSucursal()
         elif eleccion == 5:
