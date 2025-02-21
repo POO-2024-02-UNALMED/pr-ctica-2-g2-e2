@@ -543,4 +543,4 @@ def menuPrincipal():
             print("Opción no válida, intente nuevamente")
 
 if __name__ == "__main__":
-    menuPrincipal()  
+    menuPrincipal()
