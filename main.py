@@ -13,11 +13,11 @@ from modelo.Pedido import Pedido
 from modelo.EstadoPedido import EstadoPedido
 from modelo.Producto import Producto
 from baseDeDatos.DataManager import DataManager
-from modelo.Chef import Chef
 from OrdenFisica import OrdenFisica
 from PedidoFisico import PedidoFisico
 from entrada import entrada, ingresarNombre
 from excepcion.One_Sucursal import One_Sucursal
+from excepcion.Stock import Stock
 
 ####################
 # Clase para pedir domicilio
@@ -544,3 +544,4 @@ def menuPrincipal():
 
 if __name__ == "__main__":
     menuPrincipal()  
+    x = Stock()
