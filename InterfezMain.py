@@ -17,7 +17,7 @@ from baseDeDatos.DataManager import DataManager
 from modelo.Chef import Chef
 from OrdenFisica import OrdenFisica
 from PedidoFisico import PedidoFisico
-from excepcion import entrada, ingresarNombre
+from entrada import entrada, ingresarNombre
 from typing import List
 from tkinter import Tk, Label, Button
 
