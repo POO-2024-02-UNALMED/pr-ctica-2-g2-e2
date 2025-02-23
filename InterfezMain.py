@@ -21,6 +21,7 @@ from entrada import entrada, ingresarNombre
 from typing import List
 from tkinter import Tk, Label, Button
 
+dataManager = DataManager()
 
 
 ventana = Tk()
@@ -28,6 +29,8 @@ ventana.title("Menu Principal")
 ancho_pantalla = ventana.winfo_screenwidth()
 alto_pantalla = ventana.winfo_screenheight()
 ventana.geometry(f"{ancho_pantalla}x{alto_pantalla}")
+eleccion_var=tk.IntVar(value=-1)
+eleccion = 0
 
 pantalla1 = tk.Frame(ventana, bg="lightblue")
 pantalla2 = tk.Frame(ventana, bg="lightgreen")
@@ -59,54 +62,19 @@ def Sucursales():
 def limpiar_frame():
     for widget in pantalla3.winfo_children():
         widget.destroy()
+
+
+def asignar(x):
+    eleccion_var.set(x)
+    thiseleccion = eleccion_var.get()
+    print(eleccion_var.get())
         
-def pedirPrestamo():
-    aceptado = False
-    eleccion = -1
-    prestamo = 0
-    while aceptado == False:
-            x = 0
-            for i in Banco.getBancos():
-                x += 1
-                print(str(x) + ". " + i.__str__())
-            print("Escriba el número del banco que le interesa más")
-            eleccion = entrada()
-            if (eleccion <= 0) or (eleccion >= len(Banco.getBancos())):
-             return 0
-            eleccion -= 1
-            elegido = Banco.getBancos()[eleccion]
-            prestamo = elegido.aceptar(Empresa.solvencia(), Empresa.getDeudas())
-            if prestamo == 0:
-                print("Su solicitud no ha sido aceptada")
-                print("Escoja otra opción")
-            else:
-                prestamo += Banco.calcularPrestamo(Empresa.solvencia(), prestamo)
-                print("Se le han prestado $" + str(round(prestamo/1000000, 1)) + "M")
-                anos = 0
-                correcto = False
-                while correcto == False:
-                    print("Escriba la cantidad de años en los que desea pagar su préstamo")
-                    anos = entrada()
-                    if (anos <= 0) or (anos > 10):
-                        print("No se va a aceptar un plazo de esa cantidad de años")
-                    else:
-                        if anos == 1:
-                            print("Tendrá que pagar en " + str(anos) + " año")
-                        else:
-                            print("Tendrá que pagar en " + str(anos) + " años")
-                        correcto = True
-                interes = prestamo * anos * 0.03
-                total = round(prestamo + interes)
-                Empresa.endeudar(total)
-                print("Se han añadido $" + str(round(total/1000000,1)) + "M a su deuda")
-                aceptado = True
-    return prestamo
-    
+
         
 def Abrir_sucursal():
+    limpiar_frame()
     cambiar_pantalla(pantalla3)
-    presupuesto = pedirPrestamo()
-    
+
 
 def Finanzas():
     limpiar_frame()
