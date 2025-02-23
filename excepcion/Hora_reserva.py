@@ -3,7 +3,7 @@ import os
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__),'..','excepcion')))
 from Fuera_de_hora import Fuera_de_hora
 
-class Hora_Reserva(Fuera_de_hora):
+class Hora_reserva(Fuera_de_hora):
     def __init__(self, hora):
         super().__init__(hora)
     
