@@ -69,12 +69,38 @@ def asignar(x):
     eleccion_var.set(x)
     thiseleccion = eleccion_var.get()
     print(eleccion_var.get())
+    
+def accion(x):
+    limpiar_frame()
+    x -= 1
+    elegido = Banco.getBancos()[x]
+    prestamo = elegido.aceptar(Empresa.solvencia(), Empresa.getDeudas())
+    
+    if prestamo == 0:
+        lbl= Label(pantalla3, text=("Su solicitud no ha sido aceptada, Escoja otra opción")).pack(pady=(alto_pantalla/5))
+        PedirPrestamo()
+    else:
+        prestamo += Banco.calcularPrestamo(Empresa.solvencia(), prestamo)
+        lbl= Label(pantalla3, text=("Se le han prestado $" + str(round(prestamo/1000000, 1)) + "M")).pack(pady=(alto_pantalla/5))
         
+        
+    
+def PedirPrestamo():
+    limpiar_frame()
+    aceptado= False
+    prestamo = 0
+    lbl= Label(pantalla3, text=("Seleccione el número del banco que le interesa más")).pack(pady=(alto_pantalla/5))
+    x=0
+    for i in Banco.getBancos():
+        x += 1
+        tk.Button(pantalla3, text=(str(i) + ". " + i.__str__()), command=lambda x=x: accion(x)).pack(pady=5)
+    
 
         
 def Abrir_sucursal():
     limpiar_frame()
     cambiar_pantalla(pantalla3)
+    PedirPrestamo()
 
 
 def Finanzas():
@@ -129,3 +155,4 @@ print("6. Guardar y salir")
 cambiar_pantalla(pantalla1)
 
 ventana.mainloop()
+ 
