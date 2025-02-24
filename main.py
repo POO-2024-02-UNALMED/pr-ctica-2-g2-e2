@@ -17,9 +17,11 @@ from baseDeDatos.DataManager import DataManager
 from OrdenFisica import OrdenFisica
 from PedidoFisico import PedidoFisico
 from entrada import entrada, ingresarNombre
+from excepcion.Edad import Edad
 from excepcion.One_Sucursal import One_Sucursal
 from excepcion.Stock import Stock
 from modelo.Contratacion import Contratacion
+from excepcion.Sueldo import Sueldo
 
 ####################
 # Clase para pedir domicilio
@@ -252,7 +254,7 @@ def menuFinanzas():
                     error = One_Sucursal(name)
                     raise error
             except One_Sucursal:
-                error.mensaje()
+                print(error.mensaje())
                 continue
             cerrarSucursal()
         elif eleccion == 5:
@@ -313,7 +315,7 @@ def ordenFisica():
     pedido = PedidoFisico(args[0], args[1], args[2], args[3], args[4], args[5], args[6])
     pedido.facturacion()
 
-def menuContratacion():
+def menuContratacion(dataManager):
         print("Qué desea hacer?")
         print("1. Ver información personal")
         print("2. contratar personal")
@@ -328,7 +330,7 @@ def menuContratacion():
             if eleccion == 1:
                 contratacion = Contratacion()
                 contratacion.ver_meseros() 
-                menuContratacion()             
+                menuContratacion(dataManager)             
             elif eleccion == 2:
                     pass
             else:
@@ -337,42 +339,68 @@ def menuContratacion():
 
         elif eleccion == 2:
             contratacion = Contratacion()
-
-            print("=== Contratación de un nuevo mesero ===")
 # Solicitar los datos del mesero
-            id_mesero = input("Ingrese el ID del mesero: ")
-            nombre = input("Ingrese el nombre del mesero: ")
+            print("=== Contratación de un nuevo mesero ===")
+
+            print("Ingrese el ID del mesero: ", end = "")
+            id_mesero = entrada()
+            print("Ingrese el nombre del mesero: ", end = "")
+            nombre = ingresarNombre()
             direccion = input("Ingrese la dirección del mesero: ")
-
-            try:
-                edad = int(input("Ingrese la edad del mesero: "))
-            except ValueError:
-                print("Edad inválida. Debe ser un número entero.")
-                exit(1)
-
-            try:
-               sueldo = float(input("Ingrese el sueldo del mesero: "))
-            except ValueError:
-               print("Sueldo inválido. Debe ser un número.")
-               exit(1)
+            while True:
+                try:
+                    print("Ingrese la edad del mesero: ")
+                    edad = entrada()
+                    if edad < 18 or edad > 70:
+                        error = Edad(edad)
+                        raise error
+                except Edad:
+                    print(error.mensaje())
+                    continue
+                break
+            while True:
+                try:
+                    sueldo = float(input("Ingrese el sueldo del mesero: "))
+                    if sueldo < 1500000 or sueldo > 2300000:
+                        error = Sueldo(sueldo)
+                        raise error
+                except ValueError:
+                    print("Sueldo inválido. Debe ser un número.")
+                    continue
+                except Sueldo:
+                    print(error.mensaje())
+                    continue
+                break
 
 # Mostrar las sucursales disponibles
             print("Seleccione la sucursal a la que se asignará el mesero:")
-            for idx, suc in enumerate(datos.sucursales):
-                print(f"{idx}: {suc}")
-            try:
-                indice = int(input("Ingrese el número correspondiente a la sucursal: "))
-                sucursal = datos.sucursales[indice]
-            except (ValueError, IndexError):
-                print("Sucursal inválida. Contratación cancelada.")
-                exit(1)
+            idx = 0
+            string =""
+            for sucursal in Sucursal.getSucursales():
+                idx += 1
+                string = string + str(idx) + ". "
+                string = string + sucursal.__str__()
+                if sucursal != Sucursal.getSucursales()[-1]:
+                    string = string + "\n"
+            print(string)
+            while True:
+                try:
+                    indice = entrada()
+                    if indice < 1:
+                        raise IndexError
+                    sucursal = Sucursal.getSucursales()[indice - 1]
+                except (IndexError):
+                    print("Sucursal inválida, ingrese el número que acompaña la sucursal")
+                    continue
+                break
 
 # Llamada al método para contratar el mesero con los argumentos ingresados
-            contratacion.contratar_mesero(id_mesero, nombre, direccion, edad, sueldo, sucursal)
+            contratacion.contratar_mesero(id_mesero, nombre, direccion, edad, sueldo, sucursal,dataManager)
+            print("Mesero contratado exitosamente.")
 
 
 
-            menuContratacion()
+            menuContratacion(dataManager)
 
         elif eleccion == 3:
             datos = DataManager()
@@ -413,7 +441,7 @@ def menuPrincipal():
             while verdad == False:
                 verdad = admin()
                 if verdad == True:
-                   menuContratacion()
+                   menuContratacion(dataManager)
                 elif verdad == -1:
                     break
                 
