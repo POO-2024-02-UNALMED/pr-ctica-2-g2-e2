@@ -19,7 +19,6 @@ class Contratacion:
         mesero = Mesero(datos, id, nombre, direccion, edad, sucursal, sueldo=sueldo)
         self.meseros.append(mesero)
         sucursal.meseros.append(mesero)
-        print("Mesero contratado exitosamente.")
         return mesero
     
     def ver_meseros(self):
