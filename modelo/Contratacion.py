@@ -14,9 +14,9 @@ class Contratacion:
                 x.append(mesero)
         self.sucursales = Sucursal.getSucursales()  # Lista de sucursales disponibles
         self.meseros = x  # Lista de meseros contratados
-    def contratar_mesero(self, id, nombre, direccion, edad, sueldo, sucursal):
+    def contratar_mesero(self, id, nombre, direccion, edad, sueldo, sucursal, datos):
 
-        mesero = Mesero(self.datos, id, nombre, direccion, edad, sucursal, sueldo=sueldo)
+        mesero = Mesero(datos, id, nombre, direccion, edad, sucursal, sueldo=sueldo)
         self.meseros.append(mesero)
         sucursal.meseros.append(mesero)
         print("Mesero contratado exitosamente.")
