@@ -240,6 +240,16 @@ def Cerrar_sucursal():
         i += 1
     tk.Button(pantalla3, text="Salir", command=lambda: cambiar_pantalla(pantalla2)).pack(pady=5)
 
+def Pagar_Duedas():
+    limpiar_frame(pantalla3)
+    cambiar_pantalla(pantalla3)
+    paga = Empresa.pagarDeudas(Sucursal.getSucursales())
+    if paga == 0:
+        lbl =Label(pantalla3,text=("No tenemos fondos suficientes para realizar un abono")).pack(pady=5)
+        tk.Button(pantalla3, text="Salir", command=lambda: cambiar_pantalla(pantalla2)).pack(pady=5)
+    else:
+        lbl =Label(pantalla3,text=("Se han pagado $" + str(round(paga/1000000)) + "M de la deuda")).pack(pady=5)
+        tk.Button(pantalla3, text="Salir", command=lambda: cambiar_pantalla(pantalla2)).pack(pady=5)
 
 def Finanzas():
     limpiar_frame(pantalla2)
@@ -254,7 +264,7 @@ def Finanzas():
         tk.Button(pantalla2, text="2. Ver sucursales", command=Sucursales).pack(pady=5)
         tk.Button(pantalla2, text="3. Abrir sucursal", command=Abrir_sucursal).pack(pady=5)
         tk.Button(pantalla2, text="4. Cerrar sucursal", command=Cerrar_sucursal).pack(pady=5)
-        tk.Button(pantalla2, text="5. Pagar deudas", command=Reservaciones).pack(pady=5)
+        tk.Button(pantalla2, text="5. Pagar deudas", command=Pagar_Duedas).pack(pady=5)
         tk.Button(pantalla2, text="6. Salir", command=lambda: cambiar_pantalla(pantalla1)).pack(pady=5)
     
         
