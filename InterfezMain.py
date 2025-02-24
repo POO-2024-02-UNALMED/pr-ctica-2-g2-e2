@@ -197,12 +197,12 @@ def comprarTerreno(presupuesto):
         else:
             noHay.append(barrio)
             no += 1
-    lbl= Label(pantalla3, text=("Escoja en cuál barrio desea abrir la sucursal")).pack(pady=(alto_pantalla/5))
+    lbl= Label(pantalla3, text=("Escoja en cuál barrio desea abrir la sucursal")).pack(pady=(alto_pantalla/6))
     for i in range(0, no, 1):
         s = noHay[i]
         x=0
         x+=1
-        eleccion= tk.Button(pantalla3, text=(str(i + 1) + ". " + s.__str__()), command=lambda x=x: compra(x,noHay,presupuesto)).pack(pady=5)
+        eleccion= tk.Button(pantalla3, text=(str(i + 1) + ". " + s.__str__()), command=lambda x=x: compra(x,noHay,presupuesto)).pack(pady=3)
     tk.Button(pantalla3, text="Salir", command=lambda: cambiar_pantalla(pantalla2)).pack(pady=5)
 
         
