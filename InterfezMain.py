@@ -3,7 +3,7 @@ import sys
 import datetime
 from typing import List
 from modelo.Administrativo import Administrativo
-from modelo.Banco import Banco
+from modelo.Banco import *
 from modelo.Cliente import Cliente
 from modelo.Barrio import Barrio
 from modelo.Sucursal import Sucursal
@@ -23,7 +23,7 @@ from tkinter import Tk, Label, Button
 
 dataManager = DataManager()
 Empresa.calcularFinanzas(dataManager.get_sucursales())
-
+verificar = 0
 
 ventana = Tk()
 ventana.title("Menu Principal")
@@ -36,6 +36,7 @@ eleccion = 0
 pantalla1 = tk.Frame(ventana, bg="lightblue")
 pantalla2 = tk.Frame(ventana, bg="lightgreen")
 pantalla3 = tk.Frame(ventana, bg="lightgreen")
+pantalla4 = tk.Frame(ventana, bg="lightblue")
 
 def cambiar_pantalla(frame):
     frame.tkraise()
@@ -43,68 +44,174 @@ def cambiar_pantalla(frame):
 ventana.grid_rowconfigure(0, weight=1)
 ventana.grid_columnconfigure(0, weight=1)
     
-for frame in (pantalla1, pantalla2, pantalla3):
+for frame in (pantalla1, pantalla2, pantalla3, pantalla4):
     frame.grid(row=0, column=0, sticky="nsew")
     
 def Ver_finanzas():
+    limpiar_frame(pantalla3)
     cambiar_pantalla(pantalla3)
     if not pantalla3.winfo_children():
 
         lbl = Label(pantalla3, text=(Empresa.verFinanzas())).pack(pady=(alto_pantalla/5))
-        tk.Button(pantalla3, text="Regresar", command=Finanzas).pack(pady=5)
+        
 
 def Sucursales():
+    limpiar_frame(pantalla3)
     cambiar_pantalla(pantalla3)
     if not pantalla3.winfo_children():
         
         lbl = Label(pantalla3, text=(Sucursal.verSucursales())).pack(pady=(alto_pantalla/5))
         tk.Button(pantalla3, text="Regresar", command=Finanzas).pack(pady=5)
         
-def limpiar_frame():
-    for widget in pantalla3.winfo_children():
+def limpiar_frame(frame):
+    for widget in frame.winfo_children():
         widget.destroy()
-
-
+        
 def asignar(x):
     eleccion_var.set(x)
     thiseleccion = eleccion_var.get()
     print(eleccion_var.get())
     
+def procesar_prestamo(prestamo, entry_anos):
+    try:
+        anos = int(entry_anos.get())
+        if anos <= 0 or anos > 10:
+            tk.Label(pantalla4, text="No se acepta un plazo fuera del rango permitido (1-10 años)").pack(pady=5)
+        else:
+            mensaje = f"Tendrá que pagar en {anos} año" if anos == 1 else f"Tendrá que pagar en {anos} años"
+            tk.Label(pantalla4, text=mensaje).pack(pady=5)
+
+
+            interes = prestamo * anos * 0.03
+            total = round(prestamo + interes)
+            Empresa.endeudar(total)
+
+            tk.Label(pantalla4, text=f"Se han añadido ${round(total/1000000,1)}M a su deuda").pack(pady=5)
+            tk.Button(pantalla4, text="Continuar", command=comprarTerreno(prestamo)).pack(pady=5)
+            
+    except ValueError:
+        tk.Label(pantalla4, text="Por favor, ingrese un número válido").pack(pady=5)
+    
+
+
+    
 def accion(x):
-    limpiar_frame()
+    cambiar_pantalla(pantalla4)
+    limpiar_frame(pantalla4)
     x -= 1
     elegido = Banco.getBancos()[x]
     prestamo = elegido.aceptar(Empresa.solvencia(), Empresa.getDeudas())
     
     if prestamo == 0:
-        lbl= Label(pantalla3, text=("Su solicitud no ha sido aceptada, Escoja otra opción")).pack(pady=(alto_pantalla/5))
-        PedirPrestamo()
+        lbl= Label(pantalla4, text=("Su solicitud no ha sido aceptada, Escoja otra opción")).pack(pady=(alto_pantalla/5))
+        tk.Button(pantalla4, text="volver a elegir", command=PedirPrestamo).pack(pady=5)
     else:
         prestamo += Banco.calcularPrestamo(Empresa.solvencia(), prestamo)
-        lbl= Label(pantalla3, text=("Se le han prestado $" + str(round(prestamo/1000000, 1)) + "M")).pack(pady=(alto_pantalla/5))
-        
+        lbl= Label(pantalla4, text=("Se le han prestado $" + str(round(prestamo/1000000, 1)) + "M")).pack(pady=(alto_pantalla/5))
+        anos = 0
+        correcto = False
+        while correcto == False:
+            lbl= Label(pantalla4,text="Escriba la cantidad de años en los que desea pagar su préstamo").pack(pady=5)
+            anos = tk.Entry(pantalla4)
+            anos.pack(pady=5)
+            tk.Button(pantalla4, text="Confirmar", command=lambda: procesar_prestamo(prestamo, anos)).pack(pady=5)
+            tk.Button(pantalla3, text="Salir", command=lambda: cambiar_pantalla(pantalla2)).pack(pady=5)
+            correcto = True
+    return prestamo
         
     
 def PedirPrestamo():
-    limpiar_frame()
+    cambiar_pantalla(pantalla3)
+    limpiar_frame(pantalla3)
     aceptado= False
     prestamo = 0
     lbl= Label(pantalla3, text=("Seleccione el número del banco que le interesa más")).pack(pady=(alto_pantalla/5))
     x=0
     for i in Banco.getBancos():
         x += 1
-        tk.Button(pantalla3, text=(str(i) + ". " + i.__str__()), command=lambda x=x: accion(x)).pack(pady=5)
+        prestamo= tk.Button(pantalla3, text=(str(i) + ". " + i.__str__()), command=lambda x=x: accion(x)).pack(pady=5)
+    tk.Button(pantalla3, text="Salir", command=lambda: cambiar_pantalla(pantalla2)).pack(pady=5)
+    return prestamo
+
+def no_tengo_idea(i,presupuesto,cOsto,valor,cantidad,direccion,barrio,este):
+    espacio = cantidad[i]
+    presupuesto -= valor[i]
+    presupuesto -= 10000000
+    nombre = barrio.getNombre()
+    barrio.setSucursal(True)
+    new = Sucursal.getSucursales()[-1].getId()
+    cambiar_pantalla(pantalla2)
+    return Sucursal(new + 1, nombre, espacio, direccion, presupuesto)
+
+def seleccionar(x,espacios,presupuesto,barrio,este):
+    limpiar_frame(pantalla4)
+    esquina = espacios[x - 1]
+    direccion = esquina.getCoordenadas()
+    esqPer = Barrio.esquinasPer(direccion)
+    valor = []
+    cantidad = []
+    lbl= Label(pantalla3, text=("Escoja cuál de los locales disponibles le parece más interesante")).pack(pady=(alto_pantalla/5))
+    for n in range(0, esqPer, 1):
+        cOsto = Barrio.precio(presupuesto)
+        valor.append(cOsto)
+        cantidad.append(Barrio.espacio(cOsto))
+        tk.Button(pantalla4,text=(str(n + 1) + ". Precio: $" + str(round(valor[n] / 1000000)) + "M, Capacidad: " + str(cantidad[n]) + " mesas"), command=lambda i=n: no_tengo_idea(i,presupuesto,cOsto,valor,cantidad,direccion,barrio,este)).pack(pady=5)
+    tk.Button(pantalla3, text="Salir", command=lambda: cambiar_pantalla(pantalla2)).pack(pady=5)
+
+
+def compra(x,noHay,presupuesto):
+    cambiar_pantalla(pantalla4)
+    limpiar_frame(pantalla4)
+    barrio = noHay[x - 1]
+    locales = barrio.getEsquinas()
+    i = 0
+    espacios = []
+    lbl= Label(pantalla3, text=("Escoja la ubicación")).pack(pady=(alto_pantalla/5))
+    for local in locales:
+        if Sucursal.calcularDistancia(local.getCoordenadas()) == False:
+            continue
+        espacios.append(local)
+        i += 1
+        este = 5
+        tk.Button(pantalla4,text=(str(i) + ". " + local.getDireccion()), command=lambda i=i: seleccionar(i,espacios,presupuesto,barrio,este)).pack(pady=5)
+    tk.Button(pantalla3, text="Salir", command=lambda: cambiar_pantalla(pantalla2)).pack(pady=5)
+
     
+def comprarTerreno(presupuesto):
+    cambiar_pantalla(pantalla3)
+    limpiar_frame(pantalla3)
+    candidatos = Barrio.getCiudad()
+    hay = []
+    noHay = []
+    si = 0
+    no = 0
+    for barrio in candidatos:
+        if barrio.tieneSucursal() == True:
+            hay.append(barrio)
+            si +=1
+        else:
+            noHay.append(barrio)
+            no += 1
+    lbl= Label(pantalla3, text=("Escoja en cuál barrio desea abrir la sucursal")).pack(pady=(alto_pantalla/5))
+    for i in range(0, no, 1):
+        s = noHay[i]
+        x=0
+        x+=1
+        eleccion= tk.Button(pantalla3, text=(str(i + 1) + ". " + s.__str__()), command=lambda x=x: compra(x,noHay,presupuesto)).pack(pady=5)
+    tk.Button(pantalla3, text="Salir", command=lambda: cambiar_pantalla(pantalla2)).pack(pady=5)
 
         
 def Abrir_sucursal():
-    limpiar_frame()
+    limpiar_frame(pantalla3)
     cambiar_pantalla(pantalla3)
-    PedirPrestamo()
+    presupuesto = 0
+    presupuesto = PedirPrestamo()
+
+            
 
 
 def Finanzas():
-    limpiar_frame()
+    limpiar_frame(pantalla2)
     cambiar_pantalla(pantalla2)
 
     
