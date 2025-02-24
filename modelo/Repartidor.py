@@ -29,12 +29,12 @@ class Repartidor:
 
     def set_nombre(self, nombre: str):
         self.nombre = nombre
-
+        
     def is_disponible(self):
-        return self.disponible
+        return self.disponible 
 
     def set_disponible(self, disponible: bool):
-        self.is_disponible = disponible
+        self.disponible = disponible 
 
     def asignar_zona(self, zona):
         self.zonas_asignadas.append(zona)
@@ -52,4 +52,4 @@ class Repartidor:
         self.barrios_asignados = barrios
 
     def __str__(self):
-        return f"Repartidor(id={self.id}, nombre='{self.nombre}', disponible={self.is_disponible})"
+     return f"{self.nombre}" 

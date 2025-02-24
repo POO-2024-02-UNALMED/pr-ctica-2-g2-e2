@@ -78,3 +78,6 @@ class Barrio:
     def setCostoEnvio(self, costo): self.costoEnvio = costo
 
     def setSucursal(self, x): self.sucursal = x
+    
+    def __str__(self):
+        return f"{self.nombre} - Costo de envío: ${self.costoEnvio}"

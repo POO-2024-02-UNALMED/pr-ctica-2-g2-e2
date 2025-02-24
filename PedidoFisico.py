@@ -1,5 +1,5 @@
 from OrdenFisica import OrdenFisica
-from excepcion import entrada
+from entrada import entrada
 class PedidoFisico(OrdenFisica):
     def __init__(self, mesa, cliente, mesero, sucursal, numero, chef, pedido):
         super().__init__(mesa, cliente, mesero, sucursal)

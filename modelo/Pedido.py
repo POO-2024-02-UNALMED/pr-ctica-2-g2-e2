@@ -16,9 +16,10 @@ class Pedido:
         self.fecha_creacion = datetime.now()
         self.fecha_entrega = None
         self.subtotal = sum(p.precio for p in productos)
-        self.costo_envio = domicilio.barrio.get_costo_envio() if domicilio and domicilio.barrio else 0
-        self.descuento = 0
-        self.total = self.subtotal + self.costo_envio - self.descuento
+        self.costo_envio = domicilio.calcular_costo_envio()
+        self.descuento = 0.0
+        self.recargo = 0.0
+        self.total = self.subtotal + self.costo_envio
         self.notas = ""
         self.cliente = cliente
         self.repartidor = None
