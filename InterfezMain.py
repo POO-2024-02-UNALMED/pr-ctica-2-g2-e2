@@ -50,7 +50,74 @@ ventana.grid_columnconfigure(0, weight=1)
     
 for frame in (pantalla1, pantalla2, pantalla3, pantalla4):
     frame.grid(row=0, column=0, sticky="nsew")
+
+def admin(callback=None):
+    limpiar_frame(pantalla3)
+    cambiar_pantalla(pantalla3)
+    tk.Button(pantalla3, text="Salir", command=lambda: cambiar_pantalla(pantalla1)).pack(pady=5)
+    tk.Label(pantalla3, text="Ingrese su número de cédula").pack(pady=(alto_pantalla/6))
     
+    cedula_entry = tk.Entry(pantalla3)
+    cedula_entry.pack(pady=5)
+    
+    tk.Button(pantalla3, text="Confirmar", command=lambda: procesar_cedula(cedula_entry, callback)).pack(pady=5)
+
+
+def procesar_cedula(cedula_entry, callback):
+    try:
+        cedula = int(cedula_entry.get().strip())
+    except ValueError:
+        tk.Label(pantalla3, text="Ingrese una cédula válida").pack(pady=5)
+        return
+
+    if cedula == 0:
+        cambiar_pantalla(pantalla1)
+        return
+
+    admin_obj = Administrativo.verificarAdmin(cedula)
+    if admin_obj:
+        admin2(admin_obj, callback)
+    else:
+        tk.Label(pantalla3, text="Administrador no encontrado").pack(pady=5)
+
+def admin2(admin_obj, callback):
+    global admin_attempts
+    admin_attempts = 0  
+    limpiar_frame(pantalla3)
+    cambiar_pantalla(pantalla3)
+    
+    tk.Label(pantalla3, text="Ingrese la contraseña").pack(pady=(alto_pantalla/6))
+    password_entry = tk.Entry(pantalla3, show="*")
+    password_entry.pack(pady=5)
+    
+    tk.Button(pantalla3, text="Confirmar", 
+              command=lambda: procesar_contrasena(admin_obj, password_entry, callback)).pack(pady=5)
+    
+def procesar_contrasena(admin_obj, password_entry, callback):
+    global admin_attempts
+    admin = False
+    try:
+        password = int(password_entry.get().strip())
+    except ValueError:
+        tk.Label(pantalla3, text="Ingrese una contraseña válida (numérica)").pack(pady=5)
+        return
+
+    admin_attempts += 1
+    if admin_obj.verificarCodigo(password):
+        admin =True
+        tk.Label(pantalla3, text="Bienvenido admin. " + str(admin_obj.nombre)).pack(pady=(alto_pantalla/6))
+        if admin==True:
+            
+            callback()
+    else:
+        if admin_attempts > 3:
+            tk.Label(pantalla3, text="Demasiados intentos").pack(pady=5)
+        else:
+            tk.Label(pantalla3, text="Contraseña incorrecta, inténtelo nuevamente").pack(pady=5)
+            password_entry.delete(0, tk.END)
+            
+
+            
 def Ver_finanzas():
     limpiar_frame(pantalla3)
     cambiar_pantalla(pantalla3)
@@ -256,7 +323,11 @@ def Finanzas():
     limpiar_frame(pantalla2)
     cambiar_pantalla(pantalla2)
 
-    
+    admin(callback=mostrarMenuFinanzas)
+
+def mostrarMenuFinanzas(): 
+    limpiar_frame(pantalla2)
+    cambiar_pantalla(pantalla2)
     if not pantalla2.winfo_children():
         lbl = Label(pantalla2, text="===Menú finanzas===").pack(pady=(alto_pantalla/5))
     
