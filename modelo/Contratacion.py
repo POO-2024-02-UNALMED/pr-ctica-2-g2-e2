@@ -26,8 +26,8 @@ class Contratacion:
         for mesero in self.meseros:
             print(mesero)
 
-    def despedir_mesero(self):
-        id_mesero = input("Ingrese el ID del mesero a despedir: ")
+    def despedir_mesero(self, id):
+        id_mesero = id
         mesero_encontrado = None
         
         for mesero in self.meseros:
@@ -36,12 +36,8 @@ class Contratacion:
                 break
 
         if mesero_encontrado:
-        
             self.meseros.remove(mesero_encontrado)
 
-
-            if mesero_encontrado in self.datos.empleados:
-                self.datos.empleados.remove(mesero_encontrado)
 
             if mesero_encontrado in Empleado.empleados:
                 Empleado.empleados.remove(mesero_encontrado)
