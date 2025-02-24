@@ -22,9 +22,9 @@ class PedirDomicilio:
             print("Iniciando sin reiniciar los datos...")
 
     def realizar_pedido(self):
-        print("\n¿Desea realizar un nuevo pedido o ir al menú de gestión?")
+        print("\n¿Desea realizar un nuevo pedido o regresar?")
         print("1. Realizar nuevo pedido")
-        print("2. Ir al menú de gestión")
+        print("2. Regresar")
         opcion = self.entrada()
 
         if opcion == 1:
