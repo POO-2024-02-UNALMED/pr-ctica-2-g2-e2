@@ -3,13 +3,17 @@ import os
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__),'..','modelo')))
 from Mesero import Mesero
 from Empleado import Empleado
-from excepcion import entrada, ingresarNombre
+from Sucursal import Sucursal
+from entrada import entrada, ingresarNombre
 
 class Contratacion:
-    def __init__(self, datos):
-        self.datos = datos
-        self.sucursales = datos.sucursales  # Lista de sucursales disponibles
-        self.meseros = datos.meseros  # Lista de meseros contratados
+    def __init__(self):
+        x = []
+        for mesero in Empleado.getPersonal():
+            if mesero.getRol() == "MESERO":
+                x.append(mesero)
+        self.sucursales = Sucursal.getSucursales()  # Lista de sucursales disponibles
+        self.meseros = x  # Lista de meseros contratados
     def contratar_mesero(self, id, nombre, direccion, edad, sueldo, sucursal):
 
         mesero = Mesero(self.datos, id, nombre, direccion, edad, sucursal, sueldo=sueldo)
