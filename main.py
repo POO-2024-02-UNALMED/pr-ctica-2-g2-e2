@@ -403,10 +403,12 @@ def menuContratacion(dataManager):
             menuContratacion(dataManager)
 
         elif eleccion == 3:
-            datos = DataManager()
-            contratacion = Contratacion(datos)
-            contratacion.despedir_mesero()
-            menuContratacion()
+            datos = dataManager
+            contratacion = Contratacion()
+            print("Ingrese el ID del mesero a despedir: ")
+            id_mesero = entrada()
+            contratacion.despedir_mesero(id_mesero)
+            menuContratacion(dataManager)
         elif eleccion == 4:
             pass
 
