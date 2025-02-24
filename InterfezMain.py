@@ -2,8 +2,9 @@ import tkinter as tk
 import sys
 import datetime
 from typing import List
+from PedirDomicilio import PedirDomicilio
 from modelo.Administrativo import Administrativo
-from modelo.Banco import *
+from modelo.Banco import Banco
 from modelo.Cliente import Cliente
 from modelo.Barrio import Barrio
 from modelo.Sucursal import Sucursal
@@ -14,11 +15,14 @@ from modelo.Pedido import Pedido
 from modelo.EstadoPedido import EstadoPedido
 from modelo.Producto import Producto
 from baseDeDatos.DataManager import DataManager
-from modelo.Chef import Chef
 from OrdenFisica import OrdenFisica
 from PedidoFisico import PedidoFisico
 from entrada import entrada, ingresarNombre
-from typing import List
+from excepcion.Edad import Edad
+from excepcion.One_Sucursal import One_Sucursal
+from excepcion.Stock import Stock
+from modelo.Contratacion import Contratacion
+from excepcion.Sueldo import Sueldo
 from tkinter import Tk, Label, Button
 
 dataManager = DataManager()
@@ -207,7 +211,34 @@ def Abrir_sucursal():
     presupuesto = 0
     presupuesto = PedirPrestamo()
 
+def continuar_cerrar(x,sucursales):
+    limpiar_frame(pantalla3)
+    cambiar_pantalla(pantalla3)
+    eleccion = x
+    nombre = sucursales[eleccion - 1].getUbicacion()
+    sucursales[eleccion - 1].cerrar()
+    lbl= Label(pantalla3, text=("Se ha cerrado la sucursal de " + nombre)).pack(pady=(alto_pantalla/5))   
+    tk.Button(pantalla3, text="Salir", command=lambda: cambiar_pantalla(pantalla2)).pack(pady=5)
             
+def Cerrar_sucursal():
+    limpiar_frame(pantalla3)
+    cambiar_pantalla(pantalla3)
+    try:
+        if len(Sucursal.getSucursales()) == 1:
+            name = Sucursal.getSucursales()[0].getUbicacion()
+            error = One_Sucursal(name)
+            raise error
+    except One_Sucursal:
+        lbl =Label(pantalla3,text=(error.mensaje())).pack(pady=5)
+        tk.Button(pantalla3, text="Salir", command=lambda: cambiar_pantalla(pantalla2)).pack(pady=5)
+        return 0
+    sucursales = Sucursal.getSucursales()
+    i = 1
+    lbl= Label(pantalla3, text=("Escoja la sucursal que desea cerrar")).pack(pady=(alto_pantalla/5))
+    for sucursal in sucursales:
+        eleccion= tk.Button(pantalla3, text=(str(i) + ". " + sucursal.__str__()), command=lambda x=i: continuar_cerrar(x,sucursales)).pack(pady=5)
+        i += 1
+    tk.Button(pantalla3, text="Salir", command=lambda: cambiar_pantalla(pantalla2)).pack(pady=5)
 
 
 def Finanzas():
@@ -222,7 +253,7 @@ def Finanzas():
         tk.Button(pantalla2, text="1. Ver finanzas generales", command=Ver_finanzas).pack(pady=5)
         tk.Button(pantalla2, text="2. Ver sucursales", command=Sucursales).pack(pady=5)
         tk.Button(pantalla2, text="3. Abrir sucursal", command=Abrir_sucursal).pack(pady=5)
-        tk.Button(pantalla2, text="4. Cerrar sucursal", command=Domicilios).pack(pady=5)
+        tk.Button(pantalla2, text="4. Cerrar sucursal", command=Cerrar_sucursal).pack(pady=5)
         tk.Button(pantalla2, text="5. Pagar deudas", command=Reservaciones).pack(pady=5)
         tk.Button(pantalla2, text="6. Salir", command=lambda: cambiar_pantalla(pantalla1)).pack(pady=5)
     
