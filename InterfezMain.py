@@ -57,6 +57,7 @@ def Ver_finanzas():
     if not pantalla3.winfo_children():
 
         lbl = Label(pantalla3, text=(Empresa.verFinanzas())).pack(pady=(alto_pantalla/5))
+        tk.Button(pantalla3, text="Regresar", command=Finanzas).pack(pady=5)
         
 
 def Sucursales():
@@ -271,7 +272,13 @@ def Finanzas():
  
 
 def Personal():
-    pantalla1.config(bg="red")
+    verdad = False
+    while verdad == False:
+        verdad = admin()
+        if verdad == True:
+            menuContratacion(dataManager)
+        elif verdad == -1:
+            break
 def Ordenes():
     pantalla1.config(bg="green")
 def Domicilios():
