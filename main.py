@@ -19,6 +19,7 @@ from PedidoFisico import PedidoFisico
 from entrada import entrada, ingresarNombre
 from excepcion.One_Sucursal import One_Sucursal
 from excepcion.Stock import Stock
+from modelo.Contratacion import Contratacion
 
 ####################
 # Clase para pedir domicilio
@@ -325,8 +326,7 @@ def menuContratacion():
             print("2. salir")
             eleccion = entrada()
             if eleccion == 1:
-                datos = DataManager()
-                contratacion = Contratacion(datos)
+                contratacion = Contratacion()
                 contratacion.ver_meseros() 
                 menuContratacion()             
             elif eleccion == 2:
@@ -336,8 +336,7 @@ def menuContratacion():
         ###############################        
 
         elif eleccion == 2:
-            datos = DataManager()
-            contratacion = Contratacion(datos)
+            contratacion = Contratacion()
 
             print("=== Contratación de un nuevo mesero ===")
 # Solicitar los datos del mesero
