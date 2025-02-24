@@ -153,24 +153,29 @@ class DataManager:
     def actualizar_stock_producto(self, producto_id, cantidad):
         producto = self.buscar_producto_por_id(producto_id)
         if producto:
-            producto["stock"] += cantidad
+            producto.stock += cantidad 
     
     def agregar_repartidor(self, repartidor: Repartidor):
         self.repartidores.append(repartidor)
     
     def asignar_repartidor_disponible(self):
-        return next((repartidor for repartidor in self.repartidores if repartidor["calificacion"] > 4), None)
+        return next((
+            repartidor for repartidor in self.repartidores 
+            if repartidor.is_disponible() and repartidor.get_calificacion_promedio() > 4
+        ), None)
     
     def agregar_pedido(self, pedido):
         pedido.id = self.get_next_pedido_id() 
         self.pedidos.append(pedido)
         
     def buscar_pedido_por_id(self, id):
-        return next((pedido for pedido in self.pedidos if pedido["id"] == id), None)
+        return next((pedido for pedido in self.pedidos if pedido.id == id), None)
     
     def get_pedidos_vigentes(self):
-        return [pedido for pedido in self.pedidos if pedido.get("estado") not in ["Cancelado", "Entregado"]]
-    
+        return [
+            pedido for pedido in self.pedidos 
+            if pedido.estado.descripcion not in ["Cancelado", "Entregado"]
+        ]
     def get_ciudad(self):
         return self.ciudad
     
