@@ -120,9 +120,9 @@ class DataManager:
             f.autoMesero(self, 18000000)
             g.autoMesero(self, 18000000)
         for i in range(3):
-            e.autoChef(self, 18000000)
-            f.autoChef(self, 18000000)
-            g.autoChef(self, 18000000)
+            e.autoChef(self, 21600000)
+            f.autoChef(self, 21600000)
+            g.autoChef(self, 21600000)
         self.sucursales.extend([e, f, g])
         Sucursal.sucursales = self.sucursales
         
