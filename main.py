@@ -17,6 +17,8 @@ from modelo.Chef import Chef
 from OrdenFisica import OrdenFisica
 from PedidoFisico import PedidoFisico
 from excepcion import entrada, ingresarNombre
+from modelo.Contratacion import Contratacion
+
 
 ####################
 # Clase para pedir domicilio
@@ -492,6 +494,79 @@ def ordenFisica():
     pedido = PedidoFisico(args[0], args[1], args[2], args[3], args[4], args[5], args[6])
     pedido.facturacion()
 
+def menuContratacion():
+        print("Qué desea hacer?")
+        print("1. Ver información personal")
+        print("2. contratar personal")
+        print("3. despedir personal")
+        print("4. salir")
+        eleccion = entrada() 
+
+        if eleccion == 1:
+            print("1. ver meseros")
+            print("2. salir")
+            eleccion = entrada()
+            if eleccion == 1:
+                datos = DataManager()
+                contratacion = Contratacion(datos)
+                contratacion.ver_meseros() 
+                menuContratacion()             
+            elif eleccion == 2:
+                    pass
+            else:
+                print("Opción no válida")
+        ###############################        
+
+        elif eleccion == 2:
+            datos = DataManager()
+            contratacion = Contratacion(datos)
+
+            print("=== Contratación de un nuevo mesero ===")
+# Solicitar los datos del mesero
+            id_mesero = input("Ingrese el ID del mesero: ")
+            nombre = input("Ingrese el nombre del mesero: ")
+            direccion = input("Ingrese la dirección del mesero: ")
+
+            try:
+                edad = int(input("Ingrese la edad del mesero: "))
+            except ValueError:
+                print("Edad inválida. Debe ser un número entero.")
+                exit(1)
+
+            try:
+               sueldo = float(input("Ingrese el sueldo del mesero: "))
+            except ValueError:
+               print("Sueldo inválido. Debe ser un número.")
+               exit(1)
+
+# Mostrar las sucursales disponibles
+            print("Seleccione la sucursal a la que se asignará el mesero:")
+            for idx, suc in enumerate(datos.sucursales):
+                print(f"{idx}: {suc}")
+            try:
+                indice = int(input("Ingrese el número correspondiente a la sucursal: "))
+                sucursal = datos.sucursales[indice]
+            except (ValueError, IndexError):
+                print("Sucursal inválida. Contratación cancelada.")
+                exit(1)
+
+# Llamada al método para contratar el mesero con los argumentos ingresados
+            contratacion.contratar_mesero(id_mesero, nombre, direccion, edad, sueldo, sucursal)
+
+
+
+            menuContratacion()
+
+        elif eleccion == 3:
+            datos = DataManager()
+            contratacion = Contratacion(datos)
+            contratacion.despedir_mesero()
+            menuContratacion()
+        elif eleccion == 4:
+            pass
+
+
+
 def menuPrincipal():
     dataManager = DataManager()
     salir = False
@@ -517,7 +592,14 @@ def menuPrincipal():
                     break
         
         elif eleccion == 2:
-            pass
+            verdad = False
+            while verdad == False:
+                verdad = admin()
+                if verdad == True:
+                   menuContratacion()
+                elif verdad == -1:
+                    break
+                
         
         elif eleccion == 3:
             ordenFisica()

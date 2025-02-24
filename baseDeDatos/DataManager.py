@@ -30,6 +30,7 @@ class DataManager:
         self.bancos = []
         self.empleados = []
         self.reservaciones = []
+        self.meseros = []
         self.deudas = 12000000
         self.cargar_datos_prueba()
 
@@ -191,3 +192,9 @@ class DataManager:
             current_id = self.next_pedido_id
             self.next_pedido_id += 1
         return current_id
+    
+    def getMeseros(self):
+        return self.meseros
+    
+    def setMeseros(self, meseros):
+        self.meseros = meseros
