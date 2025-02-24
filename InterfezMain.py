@@ -22,6 +22,7 @@ from typing import List
 from tkinter import Tk, Label, Button
 
 dataManager = DataManager()
+Empresa.calcularFinanzas(dataManager.get_sucursales())
 
 
 ventana = Tk()
