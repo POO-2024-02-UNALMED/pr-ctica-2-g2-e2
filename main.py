@@ -19,6 +19,7 @@ from PedidoFisico import PedidoFisico
 from entrada import entrada, ingresarNombre
 from excepcion.Edad import Edad
 from excepcion.One_Sucursal import One_Sucursal
+from excepcion.Hora_reserva import Hora_reserva
 from excepcion.Stock import Stock
 from modelo.Contratacion import Contratacion
 from excepcion.Sueldo import Sueldo
@@ -269,6 +270,90 @@ def menuFinanzas():
         else:
             print("Opción no disponible")
 
+def menuReserva():
+    while True:
+        print("===Menu Reservas===")
+        print("1. Hacer reserva")
+        print("2. Aplazar reserva")
+        print("3. Cancelar reservación")
+        print("4. Salir")
+        eleccion = entrada()
+        if eleccion < 1 or eleccion > 4:
+            print("Opción no disponible")
+            continue
+        if eleccion == 1:
+            anoAhora = False
+            mesAhora = False
+            print("Ingrese el año de reservación")
+            ano = entrada()
+            if ano < datetime.date.today().year:
+                print("Ese año ya pasó")
+                continue
+            elif ano == datetime.date.today().year:
+                anoAhora = True
+            print("Ingrese el mes(en número)")
+            mes = entrada()
+            if anoAhora:
+                if mes < datetime.date.today().month:
+                    print("Ese mes ya pasó")
+                    continue
+                elif mes == datetime.date.today().month:
+                    mesAhora = True
+            print("Ingrese el día")
+            dia = entrada()
+            if mesAhora:
+                if dia <= datetime.date.today().day:
+                    print("Ese día ya pasó")
+                    continue
+            fecha = datetime.date(ano,mes,dia)
+            print("Ingrese la hora(solo el número), en formato militar")
+            hora = entrada()
+            try:
+                if hora < 8 or hora > 22:
+                    error = Hora_reserva(hora)
+                    raise error
+            except Hora_reserva:
+                print(error.mensaje)
+                continue
+            minutos = 0
+            while True:
+                if not hora > 21:
+                    print("Ingrese los minutos que habrán pasado desde la hora en punto en número")
+                    print("Ejemplo: Si su reserva es a las 3:30, ahora ongrese el 30")
+                    minutos = entrada()
+                    if minutos < 0 or minutos > 59:
+                        print("Horario incorrecto")
+                        continue
+                    else:
+                        break
+            horario = datetime.time(hora, minutos)
+            while True:
+                print("Ingrese la cantidad de personas que asistirán")
+                personas = entrada()
+                if personas < 1 or personas > 8:
+                    print("No es posible registrar esa cantidad de personas")
+                    continue
+                else:
+                    break
+            i = 0
+            for j in Sucursal.getSucursales():
+                i += 1
+                print(str(i)+ ". " + j.__str__())
+            print("Escoja la sucursal en la que hará su reservación")
+            while True:
+                try:
+                    elegir = entrada()
+                    if elegir < 1:
+                        raise IndexError
+                    sucursal = Sucursal.getSucursales()[elegir - 1]
+                except IndexError:
+                    print("Opción no disponible")
+                    continue
+
+        if eleccion == 4:
+            break
+
+
 ##################
 # Métodos para administración pedidos físicos
 ##################
@@ -457,7 +542,7 @@ def menuPrincipal():
             pedir_domicilio.realizar_pedido()
         
         elif eleccion == 5:
-            pass
+            menuReserva()
 
         elif eleccion == 6:
             salir = True
