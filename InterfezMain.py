@@ -344,6 +344,8 @@ def mostrarMenuFinanzas():
 
 
 def menuContratacion(dataManager):
+    limpiar_frame(pantalla2)
+    cambiar_pantalla(pantalla2)
     lbl = Label(pantalla2, text="Qué desea hacer?").pack(pady=5)
     tk.Button(pantalla2, text="1. Ver información personal", command=meseros).pack(pady=5)
     tk.Button(pantalla2, text="2. contratar personal", command=mostrarMenuPersonal).pack(pady=5)
@@ -354,7 +356,7 @@ def meseros():
         limpiar_frame(pantalla2)
         cambiar_pantalla(pantalla2)
         Ver_meseros()
-        tk.Button(pantalla2, text="salir", command=menuContratacion).pack(pady=5)
+        tk.Button(pantalla2, text="salir", command=menuContratacion(dataManager)).pack(pady=5)
          
 def Informacion_per():
         limpiar_frame(pantalla2)
