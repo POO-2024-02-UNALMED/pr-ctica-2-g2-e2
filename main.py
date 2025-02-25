@@ -358,7 +358,7 @@ def menuReserva():
 # Métodos para administración pedidos físicos
 ##################
 def ordenFisica():
-    cliente = Cliente(1, "Osito69", "CLL2_CRR3", "50774 63 m13764")
+    cliente = Cliente(1, "Perry Hornito Rinco", "CLL2_CRR3", "50774 63 m13764")
     i = 0
     eleccion= 0
 
