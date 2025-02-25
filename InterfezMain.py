@@ -734,13 +734,14 @@ def hacerpedido(orden):
 def Ordenes4(mes,sucursal,cliente,cantidad):
     limpiar_frame(pantalla2)
     cambiar_pantalla(pantalla2)
+    tk.Button(pantalla2, text="4. Salir", command=lambda: cambiar_pantalla(pantalla1)).pack(pady=5)
     for mesa in sucursal.getMesas():
         if mesa.getCapacidad() >= cantidad and mesa.estaReservada() == False:
             mes = mesa
             mesa.setReserva(True)
             break
     if mes == None:
-        tk.Label(pantalla2, text="No hay mesas disponibles").pack(pady=5)
+        tk.Label(pantalla2, text="No hay suficientes mesas disponibles").pack(pady=5)
         return
     meso = None
     for mesero in sucursal.getMeseros():
@@ -776,13 +777,14 @@ def Ordenes():
     limpiar_frame(pantalla2)
     cambiar_pantalla(pantalla2)
     
-    cliente = Cliente(1, "Osito69", "CLL2_CRR3", "50774 63 m13764")
+    cliente = Cliente(1, "OsitoUWU", "CLL2_CRR3", "50774 63 m13764")
     i = 0
     eleccion= 0
     lbl = Label(pantalla2, text="Indique en cuál sucursal se está realizando la orden").pack(pady=(alto_pantalla/5))
     for sucursal in Sucursal.getSucursales():
         i += 1
         tk.Button(pantalla2, text=(str(i) + ". " + sucursal.__str__()), command=lambda: Ordenes2(sucursal,cliente)).pack(pady=5)
+
         
     
 
