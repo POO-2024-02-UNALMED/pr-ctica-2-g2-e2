@@ -5,6 +5,7 @@ class Ventana:
     
     def __init__(self):
         self.actual = 1
+        self.aactual = 1
         self.ventana = Tk()
         root = self.ventana
         self.ventana.title("Práctica 2, grupo 2-2")
@@ -26,8 +27,14 @@ class Ventana:
         vida = self.p5 = Button(master = p2, fg = "black", text = string,font = ("Arial", 7), command = self.cambioIng)
         vida.place(relheight = 0.60, relwidth = 0.94, relx = 0.03, rely = 0.015)
         vida.bind()
-        entrar = self.p4 = Button(master = p1, text = "🤯Ingresar al sistema🤯", bg = "blue", fg = "white", font = ("Arial", 18))
-        entrar.place(relheight = 0.60, relwidth = 0.94, relx = 0.03, rely = 0.38)       
+        fRame = self.p4 = Frame(master = p1, bg = "blue")
+        fRame.place(relheight = 0.60, relwidth = 0.94, relx = 0.03, rely = 0.38)
+        self.imagen = PhotoImage(file = "imagenes/restaurante.png")
+        self.image = Label(master = fRame, image = self.imagen, bg = "blue")
+        self.image.bind("<Enter>", self.pasar_cursor_por_encima)
+        self.image.place(relheight = 0.45, relwidth = 0.94, relx = 0.03, rely = 0.03)
+        entrar = Button(master = fRame, text = "🤯Ingresar al sistema🤯", bg = "red", fg = "white", font = ("Arial", 18))
+        entrar.place(relheight = 0.45, relwidth = 0.94, relx = 0.03, rely = 0.52)       
         fotos = self.p6 = Frame(master = p2, bg = "yellow")
         fotos.place(relheight = 0.35, relwidth = 0.94, relx = 0.03, rely = 0.63)
         self.img1 = PhotoImage(file = "imagenes/cami1.png")
@@ -55,7 +62,17 @@ class Ventana:
     
     def salir(self):
         self.destroy()
-        
+
+    def pasar_cursor_por_encima(self, event):
+        if self.aactual == 4:
+            self.aactual = 0
+        else:
+            self.aactual += 1
+        x = ["restaurante.png", "hamburguesa.png", "perro.png", "restaurante2.png", "salchipapas.png"]
+        direccion = "imagenes/" + x[self.aactual]
+        self.imagen = PhotoImage(file = direccion)
+        self.image.config(image = self.imagen) 
+
     
     def descripcion(self):
         frame = Frame(master = self.p1, bg = "black")
