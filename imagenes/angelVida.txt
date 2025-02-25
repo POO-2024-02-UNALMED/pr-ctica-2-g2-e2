@@ -3,28 +3,19 @@ Angel Sebastian Cuaran Cruz
 Correo electronico: ancuaran@unal.edu.co
 Telefono: 317 066 2255
 Perfil Profesional
-Estudiante de Ingeniería de Sistemas en la Universidad Nacional
-de Colombia, sede Medellín, actualmente en segundo semestre. 
-Apasionado por la programación y la tecnología, con conocimientos
+Estudiante de Ingenieria de Sistemas en la Universidad Nacional
+de Colombia, sede Medellin, actualmente en segundo semestre. 
+Apasionado por la programación y la tecnologia, con conocimientos
 en Java y Python, busco oportunidades para aplicar y ampliar mis
 habilidades en proyectos académicos y profesionales.
 Formación Académica
 Universidad Nacional de Colombia – Sede Medellín
 Ingeniería de Sistemas (2o semestre)
 Año de inicio: 2024
-Habilidades Técnicas
--Lenguajes de Programación:
+Habilidades Tecnicas
+-Lenguajes de Programacion:
 -Java
 -Python
 -Otros conocimientos:
--Programación orientada a objetos
--Resolución de problemas lógicos y algoritmos
-Objetivos
--Corto Plazo:
-Integrarme en proyectos y equipos que me permitan aplicar mis
-conocimientos en desarrollo de software y adquirir experiencia
-práctica en el campo de la ingeniería de sistemas.
--Largo Plazo:
-Desarrollarme profesionalmente para contribuir al diseño y desarrollo
-de soluciones tecnológicas innovadoras que generen un impacto positivo
-en la sociedad.
+-Programacion orientada a objetos
+-Resolucion de problemas logicos y algoritmos
