@@ -1,4 +1,5 @@
-from tkinter import Tk,Button,Event,Frame, Text, Label
+from tkinter import Tk,Button,Event,Frame, Text, Label, PhotoImage
+import imagenes
 
 class Ventana:
     def __init__(self):
@@ -23,5 +24,9 @@ class Ventana:
         entrar.place(relheight = 0.60, relwidth = 0.94, relx = 0.03, rely = 0.38)       
         fotos = self.p6 = Frame(master = p2, bg = "yellow")
         fotos.place(relheight = 0.60, relwidth = 0.94, relx = 0.03, rely = 0.38) 
+        self.img1 = PhotoImage(file = "imagenes/Foto de Juan Camilo León (1).jpg")
+        self.foto1 = Label(master = fotos, image = self.img1)
+        self.foto1.pack()
+
 x = Ventana()
 x.ventana.mainloop()
