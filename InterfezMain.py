@@ -28,6 +28,7 @@ from tkinter import Tk, Label, Button
 dataManager = DataManager()
 Empresa.calcularFinanzas(dataManager.get_sucursales())
 verificar = 0
+resultado_datos = None
 
 ventana = Tk()
 ventana.title("Menu Principal")
@@ -64,6 +65,7 @@ def admin(callback=None):
 
 
 def procesar_cedula(cedula_entry, callback):
+    tk.Button(pantalla3, text="Salir", command=lambda: cambiar_pantalla(pantalla1)).pack(pady=5)
     try:
         cedula = int(cedula_entry.get().strip())
     except ValueError:
@@ -85,7 +87,7 @@ def admin2(admin_obj, callback):
     admin_attempts = 0  
     limpiar_frame(pantalla3)
     cambiar_pantalla(pantalla3)
-    
+    tk.Button(pantalla3, text="Salir", command=lambda: cambiar_pantalla(pantalla1)).pack(pady=5)
     tk.Label(pantalla3, text="Ingrese la contraseña").pack(pady=(alto_pantalla/6))
     password_entry = tk.Entry(pantalla3, show="*")
     password_entry.pack(pady=5)
@@ -111,7 +113,7 @@ def procesar_contrasena(admin_obj, password_entry, callback):
             callback()
     else:
         if admin_attempts > 3:
-            tk.Label(pantalla3, text="Demasiados intentos").pack(pady=5)
+            tk.Label(pantalla3, text="Demasiados intentos, la policia se presentara en su ubicacion proximamente").pack(pady=5)
         else:
             tk.Label(pantalla3, text="Contraseña incorrecta, inténtelo nuevamente").pack(pady=5)
             password_entry.delete(0, tk.END)
@@ -124,7 +126,7 @@ def Ver_finanzas():
     if not pantalla3.winfo_children():
 
         lbl = Label(pantalla3, text=(Empresa.verFinanzas())).pack(pady=(alto_pantalla/5))
-        tk.Button(pantalla3, text="Regresar", command=Finanzas).pack(pady=5)
+        tk.Button(pantalla3, text="Regresar", command=mostrarMenuFinanzas).pack(pady=5)
         
 
 def Sucursales():
@@ -133,7 +135,7 @@ def Sucursales():
     if not pantalla3.winfo_children():
         
         lbl = Label(pantalla3, text=(Sucursal.verSucursales())).pack(pady=(alto_pantalla/5))
-        tk.Button(pantalla3, text="Regresar", command=Finanzas).pack(pady=5)
+        tk.Button(pantalla3, text="Regresar", command=mostrarMenuFinanzas).pack(pady=5)
         
 def limpiar_frame(frame):
     for widget in frame.winfo_children():
@@ -339,25 +341,88 @@ def mostrarMenuFinanzas():
         tk.Button(pantalla2, text="5. Pagar deudas", command=Pagar_Duedas).pack(pady=5)
         tk.Button(pantalla2, text="6. Salir", command=lambda: cambiar_pantalla(pantalla1)).pack(pady=5)
     
-        
+
+
+def menuContratacion(dataManager):
+    lbl = Label(pantalla2, text="Qué desea hacer?").pack(pady=5)
+    tk.Button(pantalla2, text="1. Ver información personal", command=meseros).pack(pady=5)
+    tk.Button(pantalla2, text="2. contratar personal", command=mostrarMenuPersonal).pack(pady=5)
+    tk.Button(pantalla2, text="3. despedir personal", command=meseros).pack(pady=5)
+    tk.Button(pantalla2, text="4. salir", command=mostrarMenuPersonal).pack(pady=5)
+       
+def meseros():
+        limpiar_frame(pantalla2)
+        cambiar_pantalla(pantalla2)
+        Ver_meseros()
+        tk.Button(pantalla2, text="salir", command=menuContratacion).pack(pady=5)
+         
+def Informacion_per():
+        limpiar_frame(pantalla2)
+        cambiar_pantalla(pantalla2)
+        tk.Button(pantalla2, text="1. ver meseros", command=meseros).pack(pady=5)
+        tk.Button(pantalla2, text="2. salir", command=mostrarMenuPersonal).pack(pady=5)
+    
+def Ver_meseros():
+        lbl = Label(pantalla2, text="Qué desea hacer?").pack(pady=5)
+        for mesero in Contratacion().meseros:
+            lbl = Label(pantalla2, text=(mesero)).pack(pady=1)
+
+def Conseguir_datos(id_mesero):
+    global resultado_datos
+    try:
+        id = int(id_mesero.get().strip())
+    except ValueError:
+        tk.Label(pantalla3, text="Ingrese una id válida").pack(pady=5)
+    resultado_datos = id
+
+
+
+
+def Contratar_personal():
+    global resultado_datos
+    limpiar_frame(pantalla2)
+    cambiar_pantalla(pantalla2)
+    tk.Button(pantalla2, text="Salir", command=lambda: menuContratacion).pack(pady=5)
+    contratacion = Contratacion()
+    lbl = Label(pantalla2, text="=== Contratación de un nuevo mesero ===").pack(pady=5)
+    lbl = Label(pantalla2, text="Ingrese el ID del mesero: ").pack(pady=5)
+    id_mesero = tk.Entry(pantalla2)
+    id_mesero.pack(pady=5)
+    id= 0
+    tk.Button(pantalla2, text="Confirmar", command=lambda: Conseguir_datos(id_mesero) ).pack(pady=5)
+    id_mesero = resultado_datos
+    print(id_mesero)
+    
+
+def mostrarMenuPersonal():
+    limpiar_frame(pantalla2)
+    cambiar_pantalla(pantalla2)
+    
+    if not pantalla2.winfo_children():
+        lbl = Label(pantalla2, text="Qué desea hacer?").pack(pady=(alto_pantalla/5))
+    
+        lbl = Label(pantalla2, text="Qué acción desea realizar").pack(pady=5)
+        tk.Button(pantalla2, text="1. Ver información personal", command=Informacion_per).pack(pady=5)
+        tk.Button(pantalla2, text="2. contratar personal", command=Contratar_personal).pack(pady=5)
+        tk.Button(pantalla2, text="3. despedir personal", command=Abrir_sucursal).pack(pady=5)
+        tk.Button(pantalla2, text="6. Salir", command=lambda: cambiar_pantalla(pantalla1)).pack(pady=5)
+
+def Ordenes():
+    print("a")
+def Domicilios():
+    print("b")
+def Reservaciones():
+    print("a")
+def Guardar_y_salir():
+    ventana.destroy()
+    
  
 
 def Personal():
-    verdad = False
-    while verdad == False:
-        verdad = admin()
-        if verdad == True:
-            menuContratacion(dataManager)
-        elif verdad == -1:
-            break
-def Ordenes():
-    pantalla1.config(bg="green")
-def Domicilios():
-    pantalla1.config(bg="white")
-def Reservaciones():
-    pantalla1.config(bg = "yellow")
-def Guardar_y_salir():
-    ventana.destroy()
+    limpiar_frame(pantalla2)
+    cambiar_pantalla(pantalla2)
+
+    admin(callback=mostrarMenuPersonal)
 
 lbl = Label(pantalla1, text="===Menú principal===").pack(pady=(alto_pantalla/5))
 
