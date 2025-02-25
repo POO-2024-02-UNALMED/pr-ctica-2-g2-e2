@@ -19,6 +19,7 @@ from OrdenFisica import OrdenFisica
 from PedidoFisico import PedidoFisico
 from entrada import entrada, ingresarNombre
 from excepcion.Edad import Edad
+from excepcion.Agotado import Agotado
 from excepcion.One_Sucursal import One_Sucursal
 from excepcion.Stock import Stock
 from modelo.Contratacion import Contratacion
@@ -29,6 +30,7 @@ dataManager = DataManager()
 Empresa.calcularFinanzas(dataManager.get_sucursales())
 verificar = 0
 resultado_datos = None
+resultado_datos_N=None
 
 ventana = Tk()
 ventana.title("Menu Principal")
@@ -207,6 +209,89 @@ def PedirPrestamo():
     tk.Button(pantalla3, text="Salir", command=lambda: cambiar_pantalla(pantalla2)).pack(pady=5)
     return prestamo
 
+def registrar_admin3(nombre,cedula,contrasena):
+    cambiar_pantalla(pantalla4)
+    limpiar_frame(pantalla4)
+    Administrativo(nombre, cedula, contrasena)
+    tk.Button(pantalla4, text="Salir", command=lambda: cambiar_pantalla(pantalla2)).pack(pady=10)
+    tk.Label(pantalla4, text="No olvide los datos"+" Nuevo admin: " + nombre +" Documento: " + str(cedula) + "Contraseña: " + str(contrasena)).pack(pady=5)
+
+def registrar_admin2(nombre,cedula,contrasena):
+    admin = str(nombre.get().strip())
+    contrasena1 = str(contrasena.get().strip())
+    registrar_admin3(admin,cedula,contrasena1)
+
+    
+
+def registrar_admin(sucursal):
+    cambiar_pantalla(pantalla4)
+    limpiar_frame(pantalla4)
+    tk.Button(pantalla4, text="Salir", command=lambda: cambiar_pantalla(pantalla2)).pack(pady=10)
+    tk.Label(pantalla4, text="Ingrese el nombre del administrador que se va a contratar").pack(pady=5)
+    Nombre = tk.Entry(pantalla4)
+    Nombre.pack(pady=5)
+    cedula = Empleado.generarDocumento()
+    tk.Label(pantalla4, text="Ingrese la contraseña para la nueva cuenta").pack(pady=5)
+    contrasena = tk.Entry(pantalla4)
+    contrasena.pack(pady=5)
+    tk.Button(pantalla4, text="Confirmar", command=lambda: registrar_admin2(Nombre,cedula,contrasena)).pack(pady=10)
+
+def habilitar_sucursal3(sucursal):
+    cambiar_pantalla(pantalla4)
+    limpiar_frame(pantalla4)
+    tk.Button(pantalla4, text="Salir", command=lambda: cambiar_pantalla(pantalla2)).pack(pady=10)
+    sucursal.restarPresupuesto(10000000)
+    tk.Label(pantalla4, text="Se ha comprado un cocina profesional de $10.000.000").pack(pady=5)
+    for i in range(5):
+        nombre = sucursal.autoMesero(dataManager)
+        tk.Label(pantalla4, text="Se ha contaratado a " + nombre + " para trabajar como mesero").pack(pady=1)
+    for i in range(3):
+        nombre = sucursal.autoChef(dataManager)
+        tk.Label(pantalla4, text="Se ha contaratado a " + nombre + " para trabajar como chef").pack(pady=1)
+    tk.Button(pantalla4, text="Siguiente", command=lambda: registrar_admin(sucursal)).pack(pady=10)
+
+def habilitar_sucursal2(cuatroMesas,seisMesas,ochoMesas,cantidad,sucursal):
+    tk.Button(pantalla4, text="Salir", command=lambda: cambiar_pantalla(pantalla2)).pack(pady=10)
+    try:
+        cuatro= int(cuatroMesas.get().strip())
+        seis= int(seisMesas.get().strip())
+        ocho = int(ochoMesas.get().strip())
+        if cuatro <0 or seis <0 or ocho<0:
+            error = ValueError
+            raise error
+        elif cuatro + seis + ocho  > cantidad:
+            error = Edad(ocho)
+            raise error
+        elif cuatro + seis + ocho  < cantidad:
+            error = Agotado
+            raise Agotado
+        else:
+            sucursal.comprarMesas(cuatro, seis, ocho)
+            habilitar_sucursal3(sucursal)
+    except ValueError:
+            tk.Label(pantalla4, text="opcion inválida. Deben ser todos numeros positivos.").pack(pady=5)
+    except Edad:
+        tk.Label(pantalla4, text="Esas son demasiadas mesas, no tenemos suficiente espacio para todas").pack(pady=5)
+    except Agotado:
+        tk.Label(pantalla4, text=("Necesitamos más mesas, esas no son suficientes para llenar el espacio")).pack(pady=5)
+
+def habilitar_sucursal(dataManager, sucursal):
+    cambiar_pantalla(pantalla4)
+    limpiar_frame(pantalla4)
+    tk.Button(pantalla4, text="Salir", command=lambda: cambiar_pantalla(pantalla2)).pack(pady=10)
+    cantidad = sucursal.getCantidad()
+    lbl= Label(pantalla4, text=("Escoja cuántas mesas de 4 espacios desea comprar: $500.000")).pack(pady=(5))
+    cuatroMesas = tk.Entry(pantalla4)
+    cuatroMesas.pack(pady=5)
+    lbl= Label(pantalla4, text=("Escoja cuántas mesas de 6 espacios desea comprar: $800.000")).pack(pady=(5))
+    seisMesas= tk.Entry(pantalla4)
+    seisMesas.pack(pady=5)
+    lbl= Label(pantalla4, text=(f"Escoja cuántas mesas de 8 espacios desea comprar: $1.200.000(ideal total = {cantidad})")).pack(pady=(5))
+    ochoMesas= tk.Entry(pantalla4)
+    ochoMesas.pack(pady=5)
+    tk.Button(pantalla4, text="Confirmar", command=lambda: habilitar_sucursal2(cuatroMesas,seisMesas,ochoMesas,cantidad,sucursal)).pack(pady=5)
+    
+
 def no_tengo_idea(i,presupuesto,cOsto,valor,cantidad,direccion,barrio,este):
     espacio = cantidad[i]
     presupuesto -= valor[i]
@@ -215,7 +300,8 @@ def no_tengo_idea(i,presupuesto,cOsto,valor,cantidad,direccion,barrio,este):
     barrio.setSucursal(True)
     new = Sucursal.getSucursales()[-1].getId()
     cambiar_pantalla(pantalla2)
-    return Sucursal(new + 1, nombre, espacio, direccion, presupuesto)
+    Otra = Sucursal(new + 1, nombre, espacio, direccion, presupuesto)
+    habilitar_sucursal(DataManager,Otra)
 
 def seleccionar(x,espacios,presupuesto,barrio,este):
     limpiar_frame(pantalla4)
@@ -342,6 +428,7 @@ def mostrarMenuFinanzas():
         tk.Button(pantalla2, text="6. Salir", command=lambda: cambiar_pantalla(pantalla1)).pack(pady=5)
     
 
+    
 
 def menuContratacion(dataManager):
     limpiar_frame(pantalla2)
@@ -356,7 +443,7 @@ def meseros():
         limpiar_frame(pantalla2)
         cambiar_pantalla(pantalla2)
         Ver_meseros()
-        tk.Button(pantalla2, text="salir", command=menuContratacion(dataManager)).pack(pady=5)
+        tk.Button(pantalla2, text="salir", command=mostrarMenuPersonal).pack(pady=5)
          
 def Informacion_per():
         limpiar_frame(pantalla2)
@@ -368,33 +455,143 @@ def Ver_meseros():
         lbl = Label(pantalla2, text="Qué desea hacer?").pack(pady=5)
         for mesero in Contratacion().meseros:
             lbl = Label(pantalla2, text=(mesero)).pack(pady=1)
+            
+def asignarSucursal2(id,Nombre,direccion,edad,sueldo,sucursal,callback):
+    contratacion = Contratacion()
+    contratacion.contratar_mesero(id, Nombre, direccion, edad, sueldo, sucursal,dataManager)
+    lbl= Label(pantalla2, text="Mesero contratado exitosamente.").pack(pady=5)
+    tk.Button(pantalla2, text="2. salir", command=mostrarMenuPersonal).pack(pady=5)
 
-def Conseguir_datos(id_mesero):
+            
+def asignarSucursal(id,Nombre,direccion,edad,sueldo,callback):
+    limpiar_frame(pantalla2)
+    cambiar_pantalla(pantalla2)
+    idx = 0
+    lbl= Label(pantalla2, text="Seleccione la sucursal a la que se asignará el mesero:").pack(pady=5)
+    for sucursal in Sucursal.getSucursales():
+        idx += 1
+        tk.Button(pantalla2, text=(str(idx) + ". " + sucursal.__str__()), command=lambda: asignarSucursal2(id,Nombre,direccion,edad,sueldo,sucursal,callback)).pack(pady=5)
+
+            
+def ingreseSueldo(id,Nombre,direccion,edad,sueldo_mesero,callback):
+    try:
+        sueldo= int(sueldo_mesero.get().strip())
+        if sueldo < 1500000 or sueldo > 2300000:
+            error = Sueldo(sueldo)
+            raise error
+        asignarSucursal(id,Nombre,direccion,edad,sueldo,callback)
+    except ValueError:
+        tk.Label(pantalla2, text="Sueldo inválido. Debe ser un número.").pack(pady=5)
+    except Edad:
+        lbl = Label(pantalla2, text=(error.mensaje())).pack(pady=5)
+        
+        
+def Sueldo_mesero(id,Nombre,direccion,edad,callback):
+    limpiar_frame(pantalla2)
+    cambiar_pantalla(pantalla2)
+    lbl = Label(pantalla2, text="Ingrese el sueldo del mesero ").pack(pady=5)
+    sueldo_mesero = tk.Entry(pantalla2)
+    sueldo_mesero.pack(pady=5)
+    tk.Button(pantalla2, text="Confirmar", command=lambda: ingreseSueldo(id,Nombre,direccion,edad,sueldo_mesero,callback)).pack(pady=5)
+
+def ingreseEdad(id,Nombre,direccion,edad,callback):
+    try:
+        edad_m = int(edad.get().strip())
+        if edad_m < 18 or edad_m > 70:
+            error = Edad(edad_m)
+            raise error
+        Sueldo_mesero(id,Nombre,direccion,edad_m,callback)
+    except ValueError:
+        tk.Label(pantalla2, text="Ingrese una edad válida").pack(pady=5)
+        id=0
+    except Edad:
+        lbl = Label(pantalla2, text=(error.mensaje())).pack(pady=5)
+        print(error.mensaje())   
+
+def ingresarnombreINT3(id,Nombre_R,direccion_R,callback):
+    limpiar_frame(pantalla2)
+    cambiar_pantalla(pantalla2)
+    lbl = Label(pantalla2, text="Ingrese la edad del mesero: ").pack(pady=5)
+    Edad_mesero = tk.Entry(pantalla2)
+    Edad_mesero.pack(pady=5)
+    tk.Button(pantalla2, text="Confirmar", command=lambda: ingreseEdad(id,Nombre_R,direccion_R,Edad_mesero,callback)).pack(pady=5)
+            
+def IngresarnombreINT2(id,Nombre,direccion,callback):
+    Nombre_R= str(Nombre.get().strip())
+    direccion_R= str(direccion.get().strip())
+    ingresarnombreINT3(id,Nombre_R,direccion_R,callback)
+    
+            
+def IngresarnombreINT(id,callback = None):
+    global resultado_datos_N
+    limpiar_frame(pantalla2)
+    cambiar_pantalla(pantalla2)
+    tk.Button(pantalla2, text="Salir", command=menuContratacion).pack(pady=5)
+    contratacion = Contratacion()
+    lbl = Label(pantalla2, text="=== Contratación de un nuevo mesero ===").pack(pady=5)
+    lbl = Label(pantalla2, text="Ingrese el Nombre del mesero: ").pack(pady=5)
+    Nombre_mesero = tk.Entry(pantalla2)
+    lbl = Label(pantalla2, text="Ingrese la direccion del mesero: ").pack(pady=5)
+    direccion_mesero = tk.Entry(pantalla2)
+    Nombre_mesero.pack(pady=5)
+    direccion_mesero.pack(pady=5)
+    tk.Button(pantalla2, text="Confirmar", command=lambda: IngresarnombreINT2(id,Nombre_mesero,direccion_mesero,callback)).pack(pady=5)
+
+
+def Conseguir_datos(id_mesero, callback):
     global resultado_datos
     try:
         id = int(id_mesero.get().strip())
+        IngresarnombreINT(id,callback)
     except ValueError:
-        tk.Label(pantalla3, text="Ingrese una id válida").pack(pady=5)
-    resultado_datos = id
+        tk.Label(pantalla2, text="Ingrese una id válida").pack(pady=5)
+        id=0
+    finally:
+        resultado_datos = id
+        
+    
 
 
 
 
-def Contratar_personal():
+
+def Contratar_personal(callback = None):
     global resultado_datos
     limpiar_frame(pantalla2)
     cambiar_pantalla(pantalla2)
-    tk.Button(pantalla2, text="Salir", command=lambda: menuContratacion).pack(pady=5)
+    tk.Button(pantalla2, text="Salir", command=mostrarMenuPersonal).pack(pady=5)
     contratacion = Contratacion()
     lbl = Label(pantalla2, text="=== Contratación de un nuevo mesero ===").pack(pady=5)
     lbl = Label(pantalla2, text="Ingrese el ID del mesero: ").pack(pady=5)
     id_mesero = tk.Entry(pantalla2)
     id_mesero.pack(pady=5)
     id= 0
-    tk.Button(pantalla2, text="Confirmar", command=lambda: Conseguir_datos(id_mesero) ).pack(pady=5)
-    id_mesero = resultado_datos
-    print(id_mesero)
+    tk.Button(pantalla2, text="Confirmar", command=lambda: Conseguir_datos(id_mesero, callback) ).pack(pady=5)
     
+def Despedir_personal2(id_mesero):
+    global resultado_datos
+    contratacion = Contratacion()
+    try:
+        id = int(id_mesero.get().strip())
+        contratacion.despedir_mesero(id)
+    except ValueError:
+        tk.Label(pantalla2, text="Ingrese una id válida").pack(pady=5)
+        id=0
+    finally:
+        resultado_datos = id
+
+def Despedir_personal():
+        limpiar_frame(pantalla2)
+        cambiar_pantalla(pantalla2)
+        datos = dataManager
+        contratacion = Contratacion()
+        lbl = Label(pantalla2, text="Ingrese el ID del mesero a despedir: ").pack(pady=5)
+        id_mesero = tk.Entry(pantalla2)
+        id_mesero.pack(pady=5)
+        tk.Button(pantalla2, text="Confirmar", command=lambda: Despedir_personal2(id_mesero) ).pack(pady=5)
+        tk.Button(pantalla2, text="Salir", command=mostrarMenuPersonal).pack(pady=5)
+
+
 
 def mostrarMenuPersonal():
     limpiar_frame(pantalla2)
@@ -406,8 +603,8 @@ def mostrarMenuPersonal():
         lbl = Label(pantalla2, text="Qué acción desea realizar").pack(pady=5)
         tk.Button(pantalla2, text="1. Ver información personal", command=Informacion_per).pack(pady=5)
         tk.Button(pantalla2, text="2. contratar personal", command=Contratar_personal).pack(pady=5)
-        tk.Button(pantalla2, text="3. despedir personal", command=Abrir_sucursal).pack(pady=5)
-        tk.Button(pantalla2, text="6. Salir", command=lambda: cambiar_pantalla(pantalla1)).pack(pady=5)
+        tk.Button(pantalla2, text="3. despedir personal", command=Despedir_personal).pack(pady=5)
+        tk.Button(pantalla2, text="4. Salir", command=lambda: cambiar_pantalla(pantalla1)).pack(pady=5)
 
 def Ordenes():
     print("a")
@@ -418,7 +615,7 @@ def Reservaciones():
 def Guardar_y_salir():
     ventana.destroy()
     
- 
+
 
 def Personal():
     limpiar_frame(pantalla2)
