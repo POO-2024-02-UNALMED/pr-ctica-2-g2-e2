@@ -1,5 +1,6 @@
 from tkinter import Tk,Button,Event,Frame, Text, Label, PhotoImage, Menu
 
+
     
 class Ventana:
     
@@ -33,7 +34,7 @@ class Ventana:
         self.image = Label(master = fRame, image = self.imagen, bg = "blue")
         self.image.bind("<Enter>", self.pasar_cursor_por_encima)
         self.image.place(relheight = 0.45, relwidth = 0.94, relx = 0.03, rely = 0.03)
-        entrar = Button(master = fRame, text = "🤯Ingresar al sistema🤯", bg = "red", fg = "white", font = ("Arial", 18))
+        entrar = Button(master = fRame, text = "🤯Ingresar al sistema🤯", bg = "red",command=self.destroy, fg = "white",font = ("Arial", 18))
         entrar.place(relheight = 0.45, relwidth = 0.94, relx = 0.03, rely = 0.52)       
         fotos = self.p6 = Frame(master = p2, bg = "yellow")
         fotos.place(relheight = 0.35, relwidth = 0.94, relx = 0.03, rely = 0.63)

@@ -2,6 +2,7 @@ import tkinter as tk
 import sys
 import datetime
 from typing import List
+import principal
 from tkinter import Entry
 from PedirDomicilio import PedirDomicilio
 from modelo.Administrativo import Administrativo
@@ -480,13 +481,13 @@ def ingreseSueldo(id,Nombre,direccion,edad,sueldo_mesero,callback):
     try:
         sueldo= int(sueldo_mesero.get().strip())
         if sueldo < 1500000 or sueldo > 2300000:
-            error = Sueldo(sueldo)
+            error = Edad(sueldo)
             raise error
         asignarSucursal(id,Nombre,direccion,edad,sueldo,callback)
     except ValueError:
         tk.Label(pantalla2, text="Sueldo inválido. Debe ser un número.").pack(pady=5)
     except Edad:
-        lbl = Label(pantalla2, text=(error.mensaje())).pack(pady=5)
+        lbl = Label(pantalla2, text=("Sueldo inválido. (por bajo o por alto)")).pack(pady=5)
         
         
 def Sueldo_mesero(id,Nombre,direccion,edad,callback):
@@ -627,12 +628,14 @@ def Personal():
     admin(callback=mostrarMenuPersonal)
 
 def calificacion1(pedido,calificacion):
+    tk.Button(pantalla2, text="Salir", command=lambda: cambiar_pantalla(pantalla1)).pack(pady=5)
     try:
         calificacion_R = int(calificacion.get().strip())
         if calificacion_R < 1 or calificacion_R > 5:
-            error =  Edad(calificacion)
+            error =  Edad(calificacion_R)
             raise error
-        pedido.CLIENTE.dar_calificacion(pedido.mesero, pedido.chef, calificacion)
+        pedido.CLIENTE.dar_calificacion(pedido.mesero, pedido.chef, calificacion_R)
+        tk.Label(pantalla2, text="Gracias por calificarnos").pack(pady=5)
     except ValueError:
         tk.Label(pantalla2, text="Ingrese una cantidad válida(numeros)").pack(pady=5)
     except  Edad:
@@ -677,9 +680,9 @@ def factura(pedido):
         tk.Label(pantalla2,text="Ingrese la calificación que desea darle al servicio(número entre 1 y 5)").pack(pady=5)
         calificacion = tk.Entry(pantalla2)
         calificacion.pack(pady=5)
-        tk.Button(pantalla2, text=("confirmar"), command=calificacion1(pedido,calificacion)).pack(pady=5)
+        tk.Button(pantalla2, text=("confirmar"), command=lambda: calificacion1(pedido,calificacion)).pack(pady=5)
 
-
+boton_confirmar = None
     
 def crear_Pedido(orden,platoF,cantPer):
     args = [orden.mesa, orden.CLIENTE, orden.mesero, orden.SUCURSAL, cantPer, Chef.asignar(orden.SUCURSAL), platoF]
@@ -687,9 +690,14 @@ def crear_Pedido(orden,platoF,cantPer):
     factura(pedido)
     
 def añadir(orden,i,cantPer):
+    global boton_confirmar
     global platosF
     platosF.append(i)
-    tk.Button(pantalla2, text=("confirmar"), command=lambda: crear_Pedido(orden,platosF,cantPer)).pack(pady=5)
+    if boton_confirmar is None:
+        boton_confirmar = tk.Button(pantalla2, text="Confirmar", command=lambda: crear_Pedido(orden, platosF, cantPer))
+        boton_confirmar.pack(pady=5)
+    
+
     
 def hacerpedido3(orden,cantPer):
         limpiar_frame(pantalla2)
@@ -702,7 +710,7 @@ def hacerpedido3(orden,cantPer):
             plato = 0
             lbl = Label(pantalla2,text=("¿Qué platos desea ordenar?(seleccionalos la cantidad de veces que objetos quiera y de confirmar)"))
             for i in (orden.SUCURSAL.getMenu()):
-                tk.Button(pantalla2, text=(i.__str__()), command=lambda: añadir(orden,i,cantPer)).pack(pady=5)
+                tk.Button(pantalla2, text=(i.__str__()), command=lambda i=i: añadir(orden,i,cantPer)).pack(pady=5)
 
     
 def hacerpedido2(orden,cantPer):
