@@ -2,6 +2,7 @@ import tkinter as tk
 import sys
 import datetime
 from typing import List
+from tkinter import Entry
 from PedirDomicilio import PedirDomicilio
 from modelo.Administrativo import Administrativo
 from modelo.Banco import Banco
@@ -14,6 +15,7 @@ from modelo.Domicilio import Domicilio
 from modelo.Pedido import Pedido
 from modelo.EstadoPedido import EstadoPedido
 from modelo.Producto import Producto
+from modelo.Chef import Chef
 from baseDeDatos.DataManager import DataManager
 from OrdenFisica import OrdenFisica
 from PedidoFisico import PedidoFisico
@@ -31,6 +33,7 @@ Empresa.calcularFinanzas(dataManager.get_sucursales())
 verificar = 0
 resultado_datos = None
 resultado_datos_N=None
+platosF=[]
 
 ventana = Tk()
 ventana.title("Menu Principal")
@@ -622,6 +625,158 @@ def Personal():
     cambiar_pantalla(pantalla2)
 
     admin(callback=mostrarMenuPersonal)
+
+def calificacion1(pedido,calificacion):
+    try:
+        calificacion_R = int(calificacion.get().strip())
+        if calificacion_R < 1 or calificacion_R > 5:
+            error =  Edad(calificacion)
+            raise error
+        pedido.CLIENTE.dar_calificacion(pedido.mesero, pedido.chef, calificacion)
+    except ValueError:
+        tk.Label(pantalla2, text="Ingrese una cantidad válida(numeros)").pack(pady=5)
+    except  Edad:
+        tk.Label(pantalla2, text="Valor incorrecto, debe ser un número entre 1 y 5").pack(pady=5)
+
+def factura(pedido):
+        limpiar_frame(pantalla2)
+        cambiar_pantalla(pantalla2)
+
+        precio = 0
+        i = 0
+        for plato in pedido.pedido:
+            if i == 0:
+                platos = plato.getNombre() + ": $" + str(plato.getPrecio()) + "\n"
+            else:
+                platos = platos + plato.getNombre() + ": $" +str(plato.getPrecio()) + "\n"
+            precio += plato.getPrecio()
+            i += 1
+        
+        descuento = 0
+        if precio <= 20000:
+            pedido.CLIENTE.sumar_puntos(1)
+        elif precio <= 100000:
+            pedido.CLIENTE.sumar_puntos(2)
+        else:
+            pedido.CLIENTE.sumar_puntos(3)
+        
+        if pedido.CLIENTE.get_puntos() >= 20:
+            descuento = precio * 0.4
+
+        pedido.SUCURSAL.aumentarPresupuesto(precio - descuento)
+        tk.Label(pantalla2, text=("Tierra del sabor: " + pedido.SUCURSAL.getUbicacion() + "\n" +
+                "Cliente titular: " + pedido.CLIENTE.get_nombre() + "\n" +
+                "Mesero encargado: " + pedido.mesero.getNombre() + "\n" +
+                "Chef encargado: " + pedido.chef.getNombre() + "\n" +
+                "Mesa #" + str(pedido.mesa.getId()) + "\n" + 
+                "Productos: \n" +
+                platos + 
+                "Valor de la compra: $" + str(precio) + "\n" +
+                "Descuento por ser cliente frecuente: $" + str(descuento) + "\n" + 
+                "Precio total: $" + str(precio - descuento))).pack(pady=5)
+        tk.Label(pantalla2,text="Ingrese la calificación que desea darle al servicio(número entre 1 y 5)").pack(pady=5)
+        calificacion = tk.Entry(pantalla2)
+        calificacion.pack(pady=5)
+        tk.Button(pantalla2, text=("confirmar"), command=calificacion1(pedido,calificacion)).pack(pady=5)
+
+
+    
+def crear_Pedido(orden,platoF,cantPer):
+    args = [orden.mesa, orden.CLIENTE, orden.mesero, orden.SUCURSAL, cantPer, Chef.asignar(orden.SUCURSAL), platoF]
+    pedido = PedidoFisico(args[0], args[1], args[2], args[3], args[4], args[5], args[6])
+    factura(pedido)
+    
+def añadir(orden,i,cantPer):
+    global platosF
+    platosF.append(i)
+    tk.Button(pantalla2, text=("confirmar"), command=lambda: crear_Pedido(orden,platosF,cantPer)).pack(pady=5)
+    
+def hacerpedido3(orden,cantPer):
+        limpiar_frame(pantalla2)
+        cambiar_pantalla(pantalla2)
+        global platosF
+        lbl = Label(pantalla2,text=(orden.SUCURSAL.getMenu()))
+        platosF = [] 
+        if cantPer < 6 and cantPer > 0:
+            i = 0
+            plato = 0
+            lbl = Label(pantalla2,text=("¿Qué platos desea ordenar?(seleccionalos la cantidad de veces que objetos quiera y de confirmar)"))
+            for i in (orden.SUCURSAL.getMenu()):
+                tk.Button(pantalla2, text=(i.__str__()), command=lambda: añadir(orden,i,cantPer)).pack(pady=5)
+
+    
+def hacerpedido2(orden,cantPer):
+    try:
+        cantidad_N = int(cantPer.get().strip())
+        hacerpedido3(orden,cantidad_N)
+    except ValueError:
+        tk.Label(pantalla2, text="Ingrese una cantidad válida(numeros)").pack(pady=5)
+        
+
+    
+def hacerpedido(orden):
+        limpiar_frame(pantalla2)
+        cambiar_pantalla(pantalla2)
+
+        tk.Label(pantalla2, text="Ingrese cuántos platos desea ordenar").pack(pady=5)
+        cantPer = tk.Entry(pantalla2)
+        cantPer.pack(pady=5)
+        tk.Button(pantalla2, text=("Confirmar"), command=lambda: hacerpedido2(orden,cantPer)).pack(pady=5)
+
+def Ordenes4(mes,sucursal,cliente,cantidad):
+    limpiar_frame(pantalla2)
+    cambiar_pantalla(pantalla2)
+    for mesa in sucursal.getMesas():
+        if mesa.getCapacidad() >= cantidad and mesa.estaReservada() == False:
+            mes = mesa
+            mesa.setReserva(True)
+            break
+    if mes == None:
+        tk.Label(pantalla2, text="No hay mesas disponibles").pack(pady=5)
+        return
+    meso = None
+    for mesero in sucursal.getMeseros():
+        if mesero.isDisponible() == True:
+            meso = mesero
+            mesero.setDisponible(False)
+            break
+    if meso == None:
+        tk.Label(pantalla2, text="No hay nadie que pueda atender en este momento").pack(pady=5)
+        tk.Button(pantalla2, text="Salir", command=lambda: cambiar_pantalla(pantalla1)).pack(pady=5)
+    orden = OrdenFisica(mes, cliente, meso, sucursal)
+    args = hacerpedido(orden)
+
+    
+def Ordenes3(sucursal,cliente,cantidad):
+    try:
+        cantidad_N = int(cantidad.get().strip())
+        mes=None
+        Ordenes4(mes,sucursal,cliente,cantidad_N)
+    except ValueError:
+        tk.Label(pantalla2, text="Ingrese una cantidad válida(numeros)").pack(pady=5)
+        id=0
+    
+def Ordenes2(sucursal,cliente):
+    limpiar_frame(pantalla2)
+    cambiar_pantalla(pantalla2)
+    lbl = Label(pantalla2, text="Ingrese la cantidad de personas que se presentan con usted(Incluyéndolo a usted)").pack(pady=(alto_pantalla/5))
+    cantidad = tk.Entry(pantalla2)
+    cantidad.pack(pady=5)
+    tk.Button(pantalla2, text=("Confirmar"), command=lambda: Ordenes3(sucursal,cliente,cantidad)).pack(pady=5)
+        
+def Ordenes():
+    limpiar_frame(pantalla2)
+    cambiar_pantalla(pantalla2)
+    
+    cliente = Cliente(1, "Osito69", "CLL2_CRR3", "50774 63 m13764")
+    i = 0
+    eleccion= 0
+    lbl = Label(pantalla2, text="Indique en cuál sucursal se está realizando la orden").pack(pady=(alto_pantalla/5))
+    for sucursal in Sucursal.getSucursales():
+        i += 1
+        tk.Button(pantalla2, text=(str(i) + ". " + sucursal.__str__()), command=lambda: Ordenes2(sucursal,cliente)).pack(pady=5)
+        
+    
 
 lbl = Label(pantalla1, text="===Menú principal===").pack(pady=(alto_pantalla/5))
 
