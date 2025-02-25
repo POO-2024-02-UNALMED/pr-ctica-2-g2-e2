@@ -72,7 +72,54 @@ class Ventana:
             self.actual = 1
         else:
             self.actual += 1
-        
+        if self.actual == 1:
+            img1 = PhotoImage(file = "imagenes/cami1.png")
+            img2 = PhotoImage(file = "imagenes/cami2.png")
+            img3 = PhotoImage(file = "imagenes/cami3.png")
+            img4 = PhotoImage(file = "imagenes/cami4.png")
+
+            txt = open("imagenes/camiVida.txt", 'r')
+        if self.actual == 2:
+            img1 = PhotoImage(file = "imagenes/andy1.png")
+            img2 = PhotoImage(file = "imagenes/andy2.png")
+            img3 = PhotoImage(file = "imagenes/andy3.png")
+            img4 = PhotoImage(file = "imagenes/andy4.png")
+                
+            txt = open("imagenes/andyVida.txt", 'r')
+        if self.actual == 3:
+            img1 = PhotoImage(file = "imagenes/angel1.png")
+            img2 = PhotoImage(file = "imagenes/angel2.png")
+            img3 = PhotoImage(file = "imagenes/angel3.png")
+            img4 = PhotoImage(file = "imagenes/angel4.png")
+
+            txt = open("imagenes/angelVida.txt", 'r')
+        if self.actual == 4:
+            img1 = PhotoImage(file = "imagenes/luis1.png")
+            img2 = PhotoImage(file = "imagenes/luis2.png")
+            img3 = PhotoImage(file = "imagenes/luis3.png")
+            img4 = PhotoImage(file = "imagenes/luis4.png")
+
+            txt = open("imagenes/luisVida.txt", 'r')
+        if self.actual == 5:
+            img1 = PhotoImage(file = "imagenes/pablo1.png")
+            img2 = PhotoImage(file = "imagenes/pablo2.png")
+            img3 = PhotoImage(file = "imagenes/pablo3.png")
+            img4 = PhotoImage(file = "imagenes/pablo4.png")
+            
+            txt = open("imagenes/pabloVida.txt", 'r')
+        self.foto1.config(image = img1)
+        self.foto1.image = img1
+        self.foto2.config(image = img2)
+        self.foto2.image = img2
+        self.foto3.config(image = img3)
+        self.foto3.image = img3
+        self.foto4.config(image = img4)
+        self.foto4.image = img4
+        string = ""
+        for i in txt:
+            string = string + i
+        self.p5.config(text = string)
+        txt.close()
  
     
 x = Ventana()
